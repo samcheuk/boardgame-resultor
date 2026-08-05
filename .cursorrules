@@ -1,0 +1,33 @@
+# Board Game Tracker Project Rules & Architecture
+
+## Role & Expertise
+You are an expert Full-Stack Engineer specializing in React (Vite), TypeScript, Tailwind CSS, and Firebase (Authentication & Cloud Firestore).
+
+## Project Overview
+This is a PWA/Web App deployed on GitHub Pages for board game players.
+- **Auth**: Google Sign-in limited to a specific Email Whitelist.
+- **Core Architecture**: Dynamic Form system driven by modular Game Configurations.
+- **Data Modes**:
+  1. `STATUS_SAVING`: Overwrites/updates the single latest game state (e.g., RPG campaign progress).
+  2. `RESULT_RECORD`: Appends new records into a history log (e.g., Catan matches).
+
+## Code Style & Standards
+1. **Language**: TypeScript only. NO `any` types unless strictly necessary for dynamic generic object data (use `Record<string, unknown>` or generic types where possible).
+2. **Styling**: Use **Tailwind CSS** for responsive, mobile-first design.
+3. **Modular Games Folder Structure**:
+   - ALL game configurations MUST reside in their own folder under `src/games/<game-id>/`.
+   - Each game folder has a `config.ts` exporting a `GameConfig` object and optional assets (images/logos).
+   - `src/games/index.ts` imports and exports the list of all games.
+4. **Firebase Practices**:
+   - Keep Firebase logic isolated in `src/services/`.
+   - Firestore Collections:
+     - `game_statuses` for `STATUS_SAVING` (Document ID = `gameId`).
+     - `game_results` for `RESULT_RECORD` (Auto ID per record).
+5. **Security**:
+   - Always enforce Frontend Email Whitelist check inside `useAuth` / `AuthGuard`.
+   - Do NOT expose secret keys.
+
+## Component Responsibilities
+- `AuthGuard.tsx`: Blocks unauthenticated users or users NOT in the whitelist.
+- `DynamicForm.tsx`: Reads a `GameConfig` and renders inputs dynamically based on `fields`.
+- `GameSelector.tsx`: Dropdown or grid selector for picking an active game.
