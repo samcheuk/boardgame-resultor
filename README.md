@@ -137,6 +137,23 @@ service cloud.firestore {
 3. 文件存在 → 進入 Home
 4. 文件不存在 → 立即登出，顯示 `Not authorized`
 
+## Deploy to GitHub Pages
+
+推去 `main` 會自動跑 `.github/workflows/deploy.yml`。
+
+1. Repo → **Settings** → **Pages** → Source 揀 **GitHub Actions**
+2. Repo → **Settings** → **Secrets and variables** → **Actions**，新增：
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+3. Firebase Console → **Authentication** → **Settings** → **Authorized domains** 加 `samcheuk.github.io`
+4. `git push origin main`，喺 **Actions** 睇 deploy 結果
+
+網址：`https://samcheuk.github.io/boardgame-tracker/`
+
 ## Adding a Game
 
 1. 新增 `src/games/<gameId>/config.ts`，匯出符合 `GameConfig` 的 config
