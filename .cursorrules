@@ -1,33 +1,26 @@
-# Board Game Tracker Project Rules & Architecture
+# Role & Persona
+You are an expert Frontend Developer specializing in React, TypeScript, Vite, and Firebase. You write clean, modular, and maintainable code. 
 
-## Role & Expertise
-You are an expert Full-Stack Engineer specializing in React (Vite), TypeScript, Tailwind CSS, and Firebase (Authentication & Cloud Firestore).
+# Tech Stack
+- Framework: React 18+ (with Vite)
+- Language: TypeScript
+- Database & Auth: Firebase (Firestore, Google Auth)
+- Routing: React Router v6
+- Styling: Tailwind CSS (Preferred)
 
-## Project Overview
-This is a PWA/Web App deployed on GitHub Pages for board game players.
-- **Auth**: Google Sign-in limited to a specific Email Whitelist.
-- **Core Architecture**: Dynamic Form system driven by modular Game Configurations.
-- **Data Modes**:
-  1. `STATUS_SAVING`: Overwrites/updates the single latest game state (e.g., RPG campaign progress).
-  2. `RESULT_RECORD`: Appends new records into a history log (e.g., Catan matches).
+# Project Context: Boardgame Tracker
+This is a web app hosted on GitHub Pages (`github.io`) for tracking board game results and saving game statuses.
+- Access is STRICTLY limited to a whitelist of users via Firebase Google Auth.
+- The app supports multiple games, each having its own configuration and assets.
 
-## Code Style & Standards
-1. **Language**: TypeScript only. NO `any` types unless strictly necessary for dynamic generic object data (use `Record<string, unknown>` or generic types where possible).
-2. **Styling**: Use **Tailwind CSS** for responsive, mobile-first design.
-3. **Modular Games Folder Structure**:
-   - ALL game configurations MUST reside in their own folder under `src/games/<game-id>/`.
-   - Each game folder has a `config.ts` exporting a `GameConfig` object and optional assets (images/logos).
-   - `src/games/index.ts` imports and exports the list of all games.
-4. **Firebase Practices**:
-   - Keep Firebase logic isolated in `src/services/`.
-   - Firestore Collections:
-     - `game_statuses` for `STATUS_SAVING` (Document ID = `gameId`).
-     - `game_results` for `RESULT_RECORD` (Auto ID per record).
-5. **Security**:
-   - Always enforce Frontend Email Whitelist check inside `useAuth` / `AuthGuard`.
-   - Do NOT expose secret keys.
+# Architecture & Constraints
+1. **Game Modules**: All game-specific logic, configs, UI components, and local assets MUST live inside `src/games/[GameName]/`. Do not pollute global components with game-specific logic.
+2. **Game Config**: Each game must have a `config.ts` exporting a standard interface (e.g., `id`, `name`, `type: 'result' | 'status'`, `coverImage`).
+3. **Auth & Whitelist**: Users must sign in with Google. Before granting access to the app, verify if their email exists in the `whitelist` Firestore collection (or a hardcoded env array if requested). Unauthenticated or non-whitelisted users must be redirected to the Login page.
+4. **TypeScript Strictness**: Use explicit typings. Avoid `any`. Use generic types for Firebase responses where possible.
+5. **Vibe Coding**: When asked to implement a feature, break it down logically, propose the necessary file changes, and wait for confirmation if the implementation involves structural changes.
 
-## Component Responsibilities
-- `AuthGuard.tsx`: Blocks unauthenticated users or users NOT in the whitelist.
-- `DynamicForm.tsx`: Reads a `GameConfig` and renders inputs dynamically based on `fields`.
-- `GameSelector.tsx`: Dropdown or grid selector for picking an active game.
+# Code Style
+- Use functional components and hooks.
+- Prefer early returns to avoid deep nesting.
+- Keep components small and focused.
