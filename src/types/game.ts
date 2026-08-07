@@ -1,8 +1,10 @@
-export type GameType = 'result' | 'status';
+export type GameType = 'status' | 'result';
 
-export interface GameConfig {
+export interface GameConfig<TMeta = unknown> {
   id: string;
   name: string;
   type: GameType;
-  coverImage: string;
+  minPlayers: number;
+  maxPlayers: number;
+  meta: TMeta;
 }
