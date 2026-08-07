@@ -13,7 +13,7 @@ import {
   type User,
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase/firebase';
+import { auth, db, isFirebaseConfigured } from '../firebase/firebase';
 
 interface AuthContextValue {
   user: User | null;
@@ -27,6 +27,10 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 async function isEmailWhitelisted(email: string): Promise<boolean> {
+  if (!db) {
+    return false;
+  }
+
   const snapshot = await getDoc(doc(db, 'whitelist', email));
   return snapshot.exists();
 }
@@ -37,7 +41,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const authInstance = auth;
+
+    if (!isFirebaseConfigured || !authInstance) {
+      setUser(null);
+      setLoading(false);
+      setError(
+        'Firebase is not configured. Copy .env.example to .env.local and fill in your Firebase keys, then restart npm run dev.',
+      );
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(authInstance, async (firebaseUser) => {
       if (!firebaseUser) {
         setUser(null);
         setLoading(false);
@@ -46,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const email = firebaseUser.email;
       if (!email || !(await isEmailWhitelisted(email))) {
-        await firebaseSignOut(auth);
+        await firebaseSignOut(authInstance);
         setUser(null);
         setError('Not authorized');
         setLoading(false);
@@ -62,16 +77,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function signInWithGoogle(): Promise<void> {
+    const authInstance = auth;
+
+    if (!authInstance) {
+      setError('Firebase is not configured.');
+      return;
+    }
+
     setError(null);
     setLoading(true);
 
     try {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(authInstance, provider);
       const email = result.user.email;
 
       if (!email || !(await isEmailWhitelisted(email))) {
-        await firebaseSignOut(auth);
+        await firebaseSignOut(authInstance);
         setUser(null);
         setError('Not authorized');
         return;
@@ -89,8 +111,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut(): Promise<void> {
+    const authInstance = auth;
+
+    if (!authInstance) {
+      setUser(null);
+      return;
+    }
+
     setError(null);
-    await firebaseSignOut(auth);
+    await firebaseSignOut(authInstance);
     setUser(null);
   }
 
