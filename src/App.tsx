@@ -1,29 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { GameView } from './pages/GameView';
+import { Home } from './pages/Home';
 import { Login } from './pages/Login';
-
-function HomePage() {
-  const { user, signOut } = useAuth();
-
-  return (
-    <main className="flex min-h-svh flex-col items-center justify-center gap-4">
-      <h1 className="text-2xl font-semibold">Boardgame Tracker</h1>
-      {user?.email ? (
-        <p className="text-sm text-neutral-500">{user.email}</p>
-      ) : null}
-      <button
-        type="button"
-        onClick={() => {
-          void signOut();
-        }}
-        className="rounded-md border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50"
-      >
-        Sign out
-      </button>
-    </main>
-  );
-}
 
 function App() {
   return (
@@ -35,7 +15,15 @@ function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <HomePage />
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/game/:gameId"
+            element={
+              <ProtectedRoute>
+                <GameView />
               </ProtectedRoute>
             }
           />
