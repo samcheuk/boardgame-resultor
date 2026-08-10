@@ -17,7 +17,9 @@ export function Home() {
     <main className="mx-auto min-h-svh w-full max-w-5xl px-4 py-8">
       <header className="mb-8 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Boardgame Tracker</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Boardgame Tracker
+          </h1>
           {user?.email ? (
             <p className="mt-1 text-sm text-neutral-500">{user.email}</p>
           ) : null}
@@ -40,12 +42,29 @@ export function Home() {
             <li key={game.id}>
               <Link
                 to={`/game/${game.id}`}
-                className="block rounded-lg border border-neutral-200 bg-white p-5 transition hover:border-neutral-400 hover:bg-neutral-50"
+                className="relative block overflow-hidden rounded-lg border border-neutral-200 bg-white p-5 transition hover:border-neutral-400"
               >
-                <h3 className="text-lg font-semibold text-neutral-900">{game.name}</h3>
-                <p className="mt-2 text-sm text-neutral-500">
-                  {gameTypeLabel(game.type)} · BGG #{game.id}
-                </p>
+                {game.coverImage ? (
+                  <>
+                    <div
+                      aria-hidden
+                      className="absolute inset-0 bg-cover bg-right bg-no-repeat opacity-45"
+                      style={{ backgroundImage: `url(${game.coverImage})` }}
+                    />
+                    <div
+                      aria-hidden
+                      className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/25"
+                    />
+                  </>
+                ) : null}
+                <div className="relative">
+                  <h3 className="text-lg font-semibold text-neutral-900">
+                    {game.name}
+                  </h3>
+                  <p className="mt-2 text-sm text-neutral-600">
+                    {gameTypeLabel(game.type)} · BGG #{game.id}
+                  </p>
+                </div>
               </Link>
             </li>
           ))}

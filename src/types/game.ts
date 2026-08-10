@@ -10,5 +10,7 @@ export interface GameConfig<TMeta = unknown> {
   minPlayers: number;
   maxPlayers: number;
   bggUrl?: string;
+  /** Optional cover / background image URL (Vite-imported asset) */
+  coverImage?: string;
   meta: TMeta;
 }
