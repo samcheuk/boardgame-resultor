@@ -1,5 +1,5 @@
 import type { GameConfig } from '../../types/game';
-import catanBgImage from './bg-image.jpg';
+import catanBgImage from './bg-image.webp';
 
 export interface CatanMeta {
   expansions: string[];
