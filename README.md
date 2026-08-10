@@ -31,7 +31,8 @@ src/
   types/            # GameConfig 等型別
 ```
 
-遊戲專屬邏輯／UI／assets 應放喺 `src/games/[gameId]/`。
+遊戲專屬邏輯／UI／assets 應放喺 `src/games/[slug]/`。  
+`GameConfig.id` = BoardGameGeek item ID（例如 Catan = `13`），`slug` 用嚟對應資料夾名。
 
 ## Local Setup
 
@@ -100,10 +101,11 @@ npm run dev
 
 1. **Build** → **Firestore Database** → 建立 database（建議先用 production mode，再自己設 rules）
 2. 建立集合 **`whitelist`**
-3. 新增文件：
-   - **Document ID** = 允許登入嘅 email（例如 `you@gmail.com`）
-   - 欄位可留空，或加任意備註欄位
-4. 每個允許嘅用戶加一份文件（document ID = 該用戶 email）
+3. 文件結構：
+   - **Document ID** = email（例如 `you@gmail.com`）
+   - **`name`**（string）= 顯示用名稱（player combobox 會用）
+   - **`createdAt`**（timestamp）= 建立時間
+4. 每個允許嘅用戶加一份文件
 
 ### 4. Security Rules
 
@@ -114,19 +116,24 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /whitelist/{email} {
-      allow read: if request.auth != null
-                  && request.auth.token.email == email;
+      allow read: if request.auth != null;
       allow write: if false;
+    }
+
+    match /game_results/{recordId} {
+      allow read, create, update, delete: if request.auth != null;
     }
   }
 }
 ```
 
+（repo 亦有 `firestore.rules` 可作參考。）
+
 然後 **Publish**。
 
 說明：
 
-- 已登入用戶只可以讀**自己**嗰份 whitelist 文件
+- 已登入用戶可以讀整個 `whitelist`（用嚟揀 player name）
 - 禁止前端寫入；whitelist 只喺 Console 管理
 - 若見到 `Missing or insufficient permissions`，多數係 rules 未 publish 或 document ID 同 Google email 唔一致
 
@@ -156,9 +163,13 @@ service cloud.firestore {
 
 ## Adding a Game
 
-1. 新增 `src/games/<gameId>/config.ts`，匯出符合 `GameConfig` 的 config
+1. 新增 `src/games/<slug>/config.ts`：
+   - `id` = BGG item ID（字串，例如 `"13"`）
+   - `slug` = 資料夾名
+   - `type`: `'result'` | `'status'`
 2. 喺 `src/games/index.ts` 登記到 `games` 陣列
-3. （可選）新增 `src/games/<gameId>/views/GameForm.tsx` 作為專屬表單；冇嘅話會用通用 Result / Status placeholder
+3. Result 遊戲可加 `src/games/<slug>/views/GamePage.tsx`（list + form）；可重用 `ResultGamePage` + `FloatingAddButton`
+4. Firestore `game_results` 文件用 `gameId` 欄位存 BGG id
 
 ## Notes
 

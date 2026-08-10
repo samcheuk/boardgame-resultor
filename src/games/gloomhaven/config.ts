@@ -5,12 +5,15 @@ export interface GloomhavenMeta {
   scenarioCount: number;
 }
 
+/** BoardGameGeek: https://boardgamegeek.com/boardgame/174430/gloomhaven */
 export const gloomhavenConfig: GameConfig<GloomhavenMeta> = {
-  id: 'gloomhaven',
+  id: '174430',
+  slug: 'gloomhaven',
   name: 'Gloomhaven',
   type: 'status',
   minPlayers: 1,
   maxPlayers: 4,
+  bggUrl: 'https://boardgamegeek.com/boardgame/174430/gloomhaven',
   meta: {
     campaignName: 'Gloomhaven',
     scenarioCount: 95,

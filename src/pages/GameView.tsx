@@ -1,30 +1,48 @@
 import { useEffect, useState, type ComponentType } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { SaveStateForm } from '../components/forms/SaveStateForm';
-import { ScoreSubmissionForm } from '../components/forms/ScoreSubmissionForm';
 import { getGameById } from '../games';
-import { loadGameView, type GameFormProps } from '../games/loadGameView';
+import { loadGamePage, type GamePageProps } from '../games/loadGameView';
 
-function FallbackGameForm({ game }: GameFormProps) {
+function FallbackGamePage({ game, mode }: GamePageProps) {
   if (game.type === 'result') {
-    return <ScoreSubmissionForm game={game} />;
+    if (mode !== 'list') {
+      return (
+        <p className="text-sm text-neutral-500">
+          Record form template is not implemented for this game yet.
+        </p>
+      );
+    }
+
+    return (
+      <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-10 text-center text-sm text-neutral-500">
+        No custom result UI for this game yet.
+      </p>
+    );
   }
 
   return <SaveStateForm game={game} />;
 }
 
-export function GameView() {
-  const { gameId } = useParams<{ gameId: string }>();
+interface GameViewProps {
+  mode: 'list' | 'create' | 'edit';
+}
+
+export function GameView({ mode }: GameViewProps) {
+  const { gameId, recordId } = useParams<{
+    gameId: string;
+    recordId?: string;
+  }>();
   const game = gameId ? getGameById(gameId) : undefined;
 
-  const [GameForm, setGameForm] = useState<ComponentType<GameFormProps> | null>(
+  const [GamePage, setGamePage] = useState<ComponentType<GamePageProps> | null>(
     null,
   );
   const [loadingView, setLoadingView] = useState(true);
 
   useEffect(() => {
     if (!game) {
-      setGameForm(null);
+      setGamePage(null);
       setLoadingView(false);
       return;
     }
@@ -32,11 +50,11 @@ export function GameView() {
     let cancelled = false;
     setLoadingView(true);
 
-    void loadGameView(game.id).then((CustomForm) => {
+    void loadGamePage(game.slug).then((CustomPage) => {
       if (cancelled) {
         return;
       }
-      setGameForm(() => CustomForm);
+      setGamePage(() => CustomPage);
       setLoadingView(false);
     });
 
@@ -49,10 +67,14 @@ export function GameView() {
     return <Navigate to="/" replace />;
   }
 
-  const Form = GameForm ?? FallbackGameForm;
+  if (mode === 'edit' && !recordId) {
+    return <Navigate to={`/game/${game.id}`} replace />;
+  }
+
+  const Page = GamePage ?? FallbackGamePage;
 
   return (
-    <main className="mx-auto min-h-svh w-full max-w-3xl px-4 py-8">
+    <main className="mx-auto min-h-svh w-full max-w-4xl px-4 py-8">
       <Link
         to="/"
         className="text-sm text-neutral-500 transition hover:text-neutral-800"
@@ -63,15 +85,28 @@ export function GameView() {
       <header className="mt-6 mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">{game.name}</h1>
         <p className="mt-1 text-sm text-neutral-500">
-          {game.type === 'result' ? 'Result Record' : 'Status Saving'} ·{' '}
-          {game.minPlayers}–{game.maxPlayers} players
+          {game.type === 'result' ? 'Result Record' : 'Status Saving'} · BGG #
+          {game.id} · {game.minPlayers}–{game.maxPlayers} players
+          {game.bggUrl ? (
+            <>
+              {' · '}
+              <a
+                href={game.bggUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-neutral-800"
+              >
+                BoardGameGeek
+              </a>
+            </>
+          ) : null}
         </p>
       </header>
 
       {loadingView ? (
-        <p className="text-sm text-neutral-500">Loading form...</p>
+        <p className="text-sm text-neutral-500">Loading game...</p>
       ) : (
-        <Form game={game} />
+        <Page game={game} mode={mode} recordId={recordId} />
       )}
     </main>
   );

@@ -43,7 +43,9 @@ export function Home() {
                 className="block rounded-lg border border-neutral-200 bg-white p-5 transition hover:border-neutral-400 hover:bg-neutral-50"
               >
                 <h3 className="text-lg font-semibold text-neutral-900">{game.name}</h3>
-                <p className="mt-2 text-sm text-neutral-500">{gameTypeLabel(game.type)}</p>
+                <p className="mt-2 text-sm text-neutral-500">
+                  {gameTypeLabel(game.type)} · BGG #{game.id}
+                </p>
               </Link>
             </li>
           ))}

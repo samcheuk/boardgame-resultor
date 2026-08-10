@@ -23,7 +23,23 @@ function App() {
             path="/game/:gameId"
             element={
               <ProtectedRoute>
-                <GameView />
+                <GameView mode="list" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/game/:gameId/new"
+            element={
+              <ProtectedRoute>
+                <GameView mode="create" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/game/:gameId/edit/:recordId"
+            element={
+              <ProtectedRoute>
+                <GameView mode="edit" />
               </ProtectedRoute>
             }
           />

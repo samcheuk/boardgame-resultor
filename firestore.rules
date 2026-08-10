@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /whitelist/{email} {
+      // Authenticated users can list names for player pickers.
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    match /game_results/{recordId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+  }
+}

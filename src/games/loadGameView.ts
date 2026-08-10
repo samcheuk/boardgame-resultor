@@ -1,26 +1,28 @@
 import type { ComponentType } from 'react';
 import type { GameConfig } from '../types/game';
 
-export interface GameFormProps {
+export interface GamePageProps {
   game: GameConfig;
+  mode: 'list' | 'create' | 'edit';
+  recordId?: string;
 }
 
-type GameFormComponent = ComponentType<GameFormProps>;
+type GamePageComponent = ComponentType<GamePageProps>;
 
 /**
- * Vite glob of optional per-game views.
- * Add `src/games/<gameId>/views/GameForm.tsx` (default export) to override
- * the generic Score Submission / Save State placeholders.
+ * Vite glob of optional per-game pages.
+ * Path uses folder slug: src/games/<slug>/views/GamePage.tsx
+ * GameConfig.id remains the BoardGameGeek item ID.
  */
-const gameViewModules = import.meta.glob<{ default: GameFormComponent }>(
-  './*/views/GameForm.tsx',
+const gamePageModules = import.meta.glob<{ default: GamePageComponent }>(
+  './*/views/GamePage.tsx',
 );
 
-export async function loadGameView(
-  gameId: string,
-): Promise<GameFormComponent | null> {
-  const path = `./${gameId}/views/GameForm.tsx`;
-  const loader = gameViewModules[path];
+export async function loadGamePage(
+  slug: string,
+): Promise<GamePageComponent | null> {
+  const path = `./${slug}/views/GamePage.tsx`;
+  const loader = gamePageModules[path];
 
   if (!loader) {
     return null;
