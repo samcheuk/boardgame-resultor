@@ -59,7 +59,10 @@ VITE_FIREBASE_PROJECT_ID=
 VITE_FIREBASE_STORAGE_BUCKET=
 VITE_FIREBASE_MESSAGING_SENDER_ID=
 VITE_FIREBASE_APP_ID=
+VITE_GOOGLE_CLIENT_ID=
 ```
+
+`VITE_GOOGLE_CLIENT_ID`：Firebase Console → **Authentication** → **Sign-in method** → **Google** → **Web SDK configuration** → **Web client ID**（`*.apps.googleusercontent.com`）。
 
 ### 3. Run
 
@@ -95,7 +98,14 @@ npm run dev
 
 1. **Build** → **Authentication** → **Get started**
 2. **Sign-in method** → 啟用 **Google**
-3. 儲存（可設定 project support email）
+3. 複製 **Web client ID** 去 `.env.local` 的 `VITE_GOOGLE_CLIENT_ID`
+4. Google Cloud Console → **APIs & Services** → **Credentials** → 你的 Web client → **Authorized JavaScript origins** 加：
+   - `http://localhost:5173`
+   - `http://localhost:5174`
+   - `https://samcheuk.github.io`
+5. 儲存（可設定 project support email）
+
+> Mobile / GitHub Pages：app 用 Google Identity Services + Firebase credential 登入，避免 `signInWithPopup/Redirect` 喺跨域（`github.io` vs `firebaseapp.com`）因 storage partitioning 出現 *missing initial state*。
 
 ### 3. Cloud Firestore + whitelist
 
@@ -156,8 +166,10 @@ service cloud.firestore {
    - `VITE_FIREBASE_STORAGE_BUCKET`
    - `VITE_FIREBASE_MESSAGING_SENDER_ID`
    - `VITE_FIREBASE_APP_ID`
+   - `VITE_GOOGLE_CLIENT_ID`
 3. Firebase Console → **Authentication** → **Settings** → **Authorized domains** 加 `samcheuk.github.io`
-4. `git push origin main`，喺 **Actions** 睇 deploy 結果
+4. Google Cloud OAuth Web client → **Authorized JavaScript origins** 加 `https://samcheuk.github.io`
+5. `git push origin main`，喺 **Actions** 睇 deploy 結果
 
 網址：`https://samcheuk.github.io/boardgame-tracker/`
 

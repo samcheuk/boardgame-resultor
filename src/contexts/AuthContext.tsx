@@ -6,14 +6,13 @@ import {
   type ReactNode,
 } from 'react';
 import {
-  GoogleAuthProvider,
   onAuthStateChanged,
-  signInWithPopup,
   signOut as firebaseSignOut,
   type User,
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db, isFirebaseConfigured } from '../firebase/firebase';
+import { signInWithGoogleCredential } from '../services/googleSignIn';
 
 interface AuthContextValue {
   user: User | null;
@@ -88,8 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
 
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(authInstance, provider);
+      const result = await signInWithGoogleCredential();
       const email = result.user.email;
 
       if (!email || !(await isEmailWhitelisted(email))) {
