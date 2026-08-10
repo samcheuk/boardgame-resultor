@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   PlayerNameField,
@@ -10,8 +10,11 @@ import {
   updateGameResult,
 } from '../../../services/gameResults';
 import { listWhitelistUsers } from '../../../services/whitelist';
+import { localizeError } from '../../../i18n/errors';
+import { useLocale } from '../../../i18n/useLocale';
 import type { GameConfig } from '../../../types/game';
 import type { PlayerScore } from '../../../types/record';
+import { catanText } from '../i18n';
 
 interface CatanRecordFormProps {
   game: GameConfig;
@@ -47,6 +50,9 @@ export function CatanRecordForm({
   userEmail,
 }: CatanRecordFormProps) {
   const navigate = useNavigate();
+  const { locale, t } = useLocale();
+  const tRef = useRef(t);
+  tRef.current = t;
   const playerSlots = game.maxPlayers;
   const [playedAt, setPlayedAt] = useState(() => toDateTimeLocalValue(new Date()));
   const [players, setPlayers] = useState<PlayerScore[]>(() =>
@@ -78,9 +84,9 @@ export function CatanRecordForm({
         }
       } catch (err) {
         if (!cancelled) {
-          const message =
-            err instanceof Error ? err.message : 'Failed to load whitelist';
-          setWhitelistError(message);
+          setWhitelistError(
+            localizeError(err, tRef.current, 'whitelist.loadFailed'),
+          );
           setWhitelistOptions([]);
         }
       }
@@ -93,7 +99,7 @@ export function CatanRecordForm({
           }
 
           if (!record || record.gameId !== game.id) {
-            setError('Record not found.');
+            setError(tRef.current('records.notFound'));
             return;
           }
 
@@ -102,9 +108,9 @@ export function CatanRecordForm({
         }
       } catch (err) {
         if (!cancelled) {
-          const message =
-            err instanceof Error ? err.message : 'Failed to load form data';
-          setError(message);
+          setError(
+            localizeError(err, tRef.current, 'records.formLoadFailed'),
+          );
         }
       } finally {
         if (!cancelled) {
@@ -133,13 +139,13 @@ export function CatanRecordForm({
     setError(null);
 
     if (!userEmail) {
-      setError('You must be signed in to save a record.');
+      setError(t('records.signInRequired'));
       return;
     }
 
     const playedAtDate = new Date(playedAt);
     if (Number.isNaN(playedAtDate.getTime())) {
-      setError('Please enter a valid date and time.');
+      setError(t('records.invalidDateTime'));
       return;
     }
 
@@ -156,7 +162,10 @@ export function CatanRecordForm({
       normalizedPlayers.length > game.maxPlayers
     ) {
       setError(
-        `Fill in ${game.minPlayers}–${game.maxPlayers} players (leave unused slots blank).`,
+        catanText(locale, 'invalidPlayerCount', {
+          min: game.minPlayers,
+          max: game.maxPlayers,
+        }),
       );
       return;
     }
@@ -166,7 +175,7 @@ export function CatanRecordForm({
         (player) => Number.isNaN(player.points) || player.points < 0,
       )
     ) {
-      setError('Points must be zero or a positive number.');
+      setError(catanText(locale, 'invalidPoints'));
       return;
     }
 
@@ -187,36 +196,38 @@ export function CatanRecordForm({
       }
       navigate(`/game/${game.id}`);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'Failed to save record';
-      setError(message);
+      setError(localizeError(err, t, 'records.saveFailed'));
     } finally {
       setSaving(false);
     }
   }
 
   if (loading) {
-    return <p className="text-sm text-neutral-500">Loading form...</p>;
+    return (
+      <p className="text-sm text-neutral-500">{t('records.loadingForm')}</p>
+    );
   }
 
   return (
     <section className="max-w-xl">
       <div className="mb-6 flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">
-          {mode === 'edit' ? 'Edit record' : 'Add record'}
+          {mode === 'edit'
+            ? t('records.editTitle')
+            : t('records.addTitle')}
         </h2>
         <Link
           to={`/game/${game.id}`}
           className="text-sm text-neutral-500 hover:text-neutral-800"
         >
-          Cancel
+          {t('common.cancel')}
         </Link>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <label className="block space-y-1.5">
           <span className="text-sm font-medium text-neutral-700">
-            Date & time
+            {t('records.dateTime')}
           </span>
           <input
             type="datetime-local"
@@ -231,19 +242,20 @@ export function CatanRecordForm({
 
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-neutral-700">
-            Players & points
+            {catanText(locale, 'playersAndPoints')}
           </h3>
           <p className="text-xs text-neutral-500">
-            Focus a name field to open the whitelist list. Type to filter, or
-            enter a custom name. Fill {game.minPlayers}–{game.maxPlayers}{' '}
-            players; leave unused slots blank.
+            {catanText(locale, 'playerInstructions', {
+              min: game.minPlayers,
+              max: game.maxPlayers,
+            })}
           </p>
 
           {players.map((player, index) => (
             <div key={index} className="flex items-end gap-2">
               <div className="min-w-0 flex-1 space-y-1.5">
                 <span className="text-xs text-neutral-500">
-                  Player {index + 1}
+                  {catanText(locale, 'player', { number: index + 1 })}
                   {player.email ? (
                     <span className="text-neutral-400"> · {player.email}</span>
                   ) : null}
@@ -259,7 +271,9 @@ export function CatanRecordForm({
                 />
               </div>
               <label className="w-24 space-y-1.5">
-                <span className="text-xs text-neutral-500">Points</span>
+                <span className="text-xs text-neutral-500">
+                  {catanText(locale, 'points')}
+                </span>
                 <input
                   type="number"
                   min={0}
@@ -288,10 +302,10 @@ export function CatanRecordForm({
           className="rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
         >
           {saving
-            ? 'Saving...'
+            ? t('records.saving')
             : mode === 'edit'
-              ? 'Save changes'
-              : 'Save record'}
+              ? t('records.saveChanges')
+              : t('records.save')}
         </button>
       </form>
     </section>

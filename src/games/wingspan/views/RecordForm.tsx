@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   PlayerNameField,
@@ -10,17 +10,20 @@ import {
   updateGameResult,
 } from '../../../services/gameResults';
 import { listWhitelistUsers } from '../../../services/whitelist';
+import { localizeError } from '../../../i18n/errors';
+import { useLocale } from '../../../i18n/useLocale';
 import type { GameConfig } from '../../../types/game';
 import type { PlayerScore } from '../../../types/record';
+import { wingspanText } from '../i18n';
 
 const SCORE_CATEGORIES = [
-  { key: 'birds', label: 'Birds' },
-  { key: 'bonusCards', label: 'Bonus cards' },
-  { key: 'endOfRoundGoals', label: 'End-of-round goals' },
-  { key: 'eggs', label: 'Eggs' },
-  { key: 'cachedFood', label: 'Cached food' },
-  { key: 'tuckedCards', label: 'Tucked cards' },
-  { key: 'nectar', label: 'Nectar (Oceania)' },
+  { key: 'birds', translationKey: 'birds' },
+  { key: 'bonusCards', translationKey: 'bonusCards' },
+  { key: 'endOfRoundGoals', translationKey: 'endOfRoundGoals' },
+  { key: 'eggs', translationKey: 'eggs' },
+  { key: 'cachedFood', translationKey: 'cachedFood' },
+  { key: 'tuckedCards', translationKey: 'tuckedCards' },
+  { key: 'nectar', translationKey: 'nectar' },
 ] as const;
 
 type ScoreCategoryKey = (typeof SCORE_CATEGORIES)[number]['key'];
@@ -91,6 +94,9 @@ export function WingspanRecordForm({
   userEmail,
 }: WingspanRecordFormProps) {
   const navigate = useNavigate();
+  const { locale, t } = useLocale();
+  const tRef = useRef(t);
+  tRef.current = t;
   const [playedAt, setPlayedAt] = useState(() =>
     toDateTimeLocalValue(new Date()),
   );
@@ -124,7 +130,7 @@ export function WingspanRecordForm({
       } catch (err) {
         if (!cancelled) {
           setWhitelistError(
-            err instanceof Error ? err.message : 'Failed to load whitelist',
+            localizeError(err, tRef.current, 'whitelist.loadFailed'),
           );
           setWhitelistOptions([]);
         }
@@ -137,7 +143,7 @@ export function WingspanRecordForm({
             return;
           }
           if (!record || record.gameId !== game.id) {
-            setError('Record not found.');
+            setError(tRef.current('records.notFound'));
             return;
           }
 
@@ -152,7 +158,7 @@ export function WingspanRecordForm({
       } catch (err) {
         if (!cancelled) {
           setError(
-            err instanceof Error ? err.message : 'Failed to load form data',
+            localizeError(err, tRef.current, 'records.formLoadFailed'),
           );
         }
       } finally {
@@ -184,18 +190,18 @@ export function WingspanRecordForm({
     setError(null);
 
     if (!userEmail) {
-      setError('You must be signed in to save a record.');
+      setError(t('records.signInRequired'));
       return;
     }
 
     const playedAtDate = new Date(playedAt);
     if (Number.isNaN(playedAtDate.getTime())) {
-      setError('Please enter a valid date and time.');
+      setError(t('records.invalidDateTime'));
       return;
     }
 
     if (players.some((player) => player.name.trim().length === 0)) {
-      setError('Enter a name for every player.');
+      setError(wingspanText(locale, 'missingPlayerName'));
       return;
     }
 
@@ -206,7 +212,7 @@ export function WingspanRecordForm({
       }),
     );
     if (hasInvalidScore) {
-      setError('Scores must be zero or positive numbers.');
+      setError(wingspanText(locale, 'invalidScores'));
       return;
     }
 
@@ -239,34 +245,38 @@ export function WingspanRecordForm({
       }
       navigate(`/game/${game.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save record');
+      setError(localizeError(err, t, 'records.saveFailed'));
     } finally {
       setSaving(false);
     }
   }
 
   if (loading) {
-    return <p className="text-sm text-neutral-500">Loading form...</p>;
+    return (
+      <p className="text-sm text-neutral-500">{t('records.loadingForm')}</p>
+    );
   }
 
   return (
     <section className="max-w-2xl">
       <div className="mb-6 flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">
-          {mode === 'edit' ? 'Edit record' : 'Add record'}
+          {mode === 'edit'
+            ? t('records.editTitle')
+            : t('records.addTitle')}
         </h2>
         <Link
           to={`/game/${game.id}`}
           className="text-sm text-neutral-500 hover:text-neutral-800"
         >
-          Cancel
+          {t('common.cancel')}
         </Link>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <label className="block space-y-1.5">
           <span className="text-sm font-medium text-neutral-700">
-            Date & time
+            {t('records.dateTime')}
           </span>
           <input
             type="datetime-local"
@@ -287,7 +297,9 @@ export function WingspanRecordForm({
             >
               <div className="mb-4 flex items-center justify-between">
                 <legend className="font-medium text-neutral-900">
-                  Player {playerIndex + 1}
+                  {wingspanText(locale, 'player', {
+                    number: playerIndex + 1,
+                  })}
                 </legend>
                 {players.length > game.minPlayers ? (
                   <button
@@ -299,13 +311,15 @@ export function WingspanRecordForm({
                     }}
                     className="text-xs text-red-600 hover:text-red-800"
                   >
-                    Remove
+                    {t('common.remove')}
                   </button>
                 ) : null}
               </div>
 
               <div className="mb-4 space-y-1.5">
-                <span className="text-xs text-neutral-500">Player name</span>
+                <span className="text-xs text-neutral-500">
+                  {wingspanText(locale, 'playerName')}
+                </span>
                 <PlayerNameField
                   id={`wingspan-player-${playerIndex}`}
                   value={player.name}
@@ -322,9 +336,11 @@ export function WingspanRecordForm({
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                {SCORE_CATEGORIES.map(({ key, label }) => (
+                {SCORE_CATEGORIES.map(({ key, translationKey }) => (
                   <label key={key} className="space-y-1.5">
-                    <span className="text-xs text-neutral-500">{label}</span>
+                    <span className="text-xs text-neutral-500">
+                      {wingspanText(locale, translationKey)}
+                    </span>
                     <input
                       type="number"
                       min={0}
@@ -344,7 +360,9 @@ export function WingspanRecordForm({
               </div>
 
               <p className="mt-4 border-t border-neutral-100 pt-3 text-right text-sm font-semibold">
-                Total: {getTotal(player.scores)} pts
+                {wingspanText(locale, 'total', {
+                  points: getTotal(player.scores),
+                })}
               </p>
             </fieldset>
           ))}
@@ -358,7 +376,7 @@ export function WingspanRecordForm({
             }}
             className="rounded-md border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50"
           >
-            + Add player
+            {wingspanText(locale, 'addPlayer')}
           </button>
         ) : null}
 
@@ -374,10 +392,10 @@ export function WingspanRecordForm({
           className="rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
         >
           {saving
-            ? 'Saving...'
+            ? t('records.saving')
             : mode === 'edit'
-              ? 'Save changes'
-              : 'Save record'}
+              ? t('records.saveChanges')
+              : t('records.save')}
         </button>
       </form>
     </section>

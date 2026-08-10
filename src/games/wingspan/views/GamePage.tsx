@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ResultGamePage } from '../../../components/game/ResultGamePage';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -6,20 +6,24 @@ import {
   deleteGameResult,
   listGameResults,
 } from '../../../services/gameResults';
+import { localizeError } from '../../../i18n/errors';
+import type { Locale } from '../../../i18n/LocaleContext';
+import { useLocale } from '../../../i18n/useLocale';
 import type { GameResultRecord } from '../../../types/record';
 import type { GamePageProps } from '../../loadGameView';
+import { wingspanText } from '../i18n';
 import { WingspanRecordForm } from './RecordForm';
 
-function formatPlayedDate(date: Date): string {
-  return date.toLocaleDateString(undefined, {
+function formatPlayedDate(date: Date, locale: Locale): string {
+  return date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   });
 }
 
-function formatPlayedTime(date: Date): string {
-  return date.toLocaleTimeString(undefined, {
+function formatPlayedTime(date: Date, locale: Locale): string {
+  return date.toLocaleTimeString(locale, {
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -27,6 +31,9 @@ function formatPlayedTime(date: Date): string {
 
 function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
   const navigate = useNavigate();
+  const { locale, t } = useLocale();
+  const tRef = useRef(t);
+  tRef.current = t;
   const [records, setRecords] = useState<GameResultRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +53,7 @@ function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
       } catch (err) {
         if (!cancelled) {
           setError(
-            err instanceof Error ? err.message : 'Failed to load records',
+            localizeError(err, tRef.current, 'records.loadFailed'),
           );
         }
       } finally {
@@ -63,7 +70,7 @@ function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
   }, [game.id]);
 
   async function handleDelete(recordId: string) {
-    if (!window.confirm('Delete this Wingspan record?')) {
+    if (!window.confirm(wingspanText(locale, 'deleteConfirm'))) {
       return;
     }
 
@@ -73,7 +80,7 @@ function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
       await deleteGameResult(recordId);
       setRecords((current) => current.filter((item) => item.id !== recordId));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete record');
+      setError(localizeError(err, t, 'records.deleteFailed'));
     } finally {
       setDeletingId(null);
     }
@@ -106,10 +113,10 @@ function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-neutral-900">
-                    {formatPlayedDate(record.playedAt)}
+                    {formatPlayedDate(record.playedAt, locale)}
                   </p>
                   <p className="text-xs text-neutral-500">
-                    {formatPlayedTime(record.playedAt)}
+                    {formatPlayedTime(record.playedAt, locale)}
                   </p>
                 </div>
                 <div className="flex shrink-0 gap-2">
@@ -117,7 +124,7 @@ function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
                     to={`/game/${game.id}/edit/${record.id}`}
                     className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs hover:bg-neutral-50"
                   >
-                    Edit
+                    {t('common.edit')}
                   </Link>
                   <button
                     type="button"
@@ -127,7 +134,9 @@ function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
                     }}
                     className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-700 hover:bg-red-50 disabled:opacity-50"
                   >
-                    {deletingId === record.id ? 'Deleting...' : 'Delete'}
+                    {deletingId === record.id
+                      ? t('common.deleting')
+                      : t('common.delete')}
                   </button>
                 </div>
               </div>
@@ -140,12 +149,12 @@ function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
                   >
                     <span className="min-w-0 truncate text-neutral-700">
                       <span className="mr-2 text-neutral-400">
-                        #{index + 1}
+                        {t('common.rank', { rank: index + 1 })}
                       </span>
                       {player.name}
                     </span>
                     <span className="shrink-0 font-medium text-neutral-900">
-                      {player.points} pts
+                      {t('common.points', { points: player.points })}
                     </span>
                   </li>
                 ))}
