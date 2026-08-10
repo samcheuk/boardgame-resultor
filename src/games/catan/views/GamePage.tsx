@@ -10,20 +10,19 @@ import type { GameResultRecord } from '../../../types/record';
 import type { GamePageProps } from '../../loadGameView';
 import { CatanRecordForm } from './RecordForm';
 
-function formatPlayedAt(date: Date): string {
-  return date.toLocaleString(undefined, {
+function formatPlayedDate(date: Date): string {
+  return date.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
   });
 }
 
-function formatPlayers(record: GameResultRecord): string {
-  return record.players
-    .map((player) => `${player.name} (${player.points})`)
-    .join(', ');
+function formatPlayedTime(date: Date): string {
+  return date.toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 function CatanRecordList({ game }: Pick<GamePageProps, 'game'>) {
@@ -86,49 +85,59 @@ function CatanRecordList({ game }: Pick<GamePageProps, 'game'>) {
         </p>
       ) : null}
 
-      <div className="overflow-x-auto rounded-lg border border-neutral-200">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-neutral-200 bg-neutral-50 text-neutral-500">
-            <tr>
-              <th className="px-4 py-3 font-medium">Date & time</th>
-              <th className="px-4 py-3 font-medium">Players & points</th>
-              <th className="px-4 py-3 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {records.map((record) => (
-              <tr key={record.id} className="border-b border-neutral-100 last:border-0">
-                <td className="px-4 py-3 whitespace-nowrap text-neutral-900">
-                  {formatPlayedAt(record.playedAt)}
-                </td>
-                <td className="px-4 py-3 text-neutral-700">
-                  {formatPlayers(record)}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-2">
-                    <Link
-                      to={`/game/${game.id}/edit/${record.id}`}
-                      className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs hover:bg-neutral-50"
-                    >
-                      Edit
-                    </Link>
-                    <button
-                      type="button"
-                      disabled={deletingId === record.id}
-                      onClick={() => {
-                        void handleDelete(record.id);
-                      }}
-                      className="rounded-md border border-red-200 px-2.5 py-1 text-xs text-red-700 hover:bg-red-50 disabled:opacity-50"
-                    >
-                      {deletingId === record.id ? 'Deleting...' : 'Delete'}
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ul className="space-y-3">
+        {records.map((record) => (
+          <li
+            key={record.id}
+            className="rounded-lg border border-neutral-200 bg-white p-4"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-neutral-900">
+                  {formatPlayedDate(record.playedAt)}
+                </p>
+                <p className="text-xs text-neutral-500">
+                  {formatPlayedTime(record.playedAt)}
+                </p>
+              </div>
+              <div className="flex shrink-0 gap-2">
+                <Link
+                  to={`/game/${game.id}/edit/${record.id}`}
+                  className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs hover:bg-neutral-50"
+                >
+                  Edit
+                </Link>
+                <button
+                  type="button"
+                  disabled={deletingId === record.id}
+                  onClick={() => {
+                    void handleDelete(record.id);
+                  }}
+                  className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-700 hover:bg-red-50 disabled:opacity-50"
+                >
+                  {deletingId === record.id ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </div>
+
+            <ul className="mt-3 space-y-1.5 border-t border-neutral-100 pt-3">
+              {record.players.map((player, index) => (
+                <li
+                  key={`${record.id}-${player.email ?? player.name}-${index}`}
+                  className="flex items-baseline justify-between gap-3 text-sm"
+                >
+                  <span className="min-w-0 truncate text-neutral-700">
+                    {player.name}
+                  </span>
+                  <span className="shrink-0 font-medium text-neutral-900">
+                    {player.points} pts
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
     </ResultGamePage>
   );
 }
