@@ -9,7 +9,10 @@ export interface WingspanOceaniaMeta {
 export const wingspanOceaniaConfig: GameConfig<WingspanOceaniaMeta> = {
   id: '300580',
   slug: 'wingspan-oceania',
-  name: 'Wingspan: Oceania Expansion',
+  name: {
+    en: 'Wingspan: Oceania Expansion',
+    'zh-TW': '展翅翱翔：大洋洲擴充',
+  },
   type: 'result',
   minPlayers: 1,
   maxPlayers: 5,

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { games } from '../games';
+import { games, getGameName } from '../games';
 import type { Translate } from '../i18n/LocaleContext';
 import { useLocale } from '../i18n/useLocale';
 import type { GameType } from '../types/game';
@@ -11,7 +11,7 @@ function gameTypeLabel(type: GameType, t: Translate): string {
 
 export function Home() {
   const { user, signOut } = useAuth();
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
 
   return (
     <main className="mx-auto min-h-svh w-full max-w-5xl px-4 pt-[max(4.5rem,calc(env(safe-area-inset-top)+3.5rem))] pb-8">
@@ -61,7 +61,7 @@ export function Home() {
                 ) : null}
                 <div className="relative">
                   <h3 className="text-lg font-semibold text-neutral-900">
-                    {game.name}
+                    {getGameName(game, locale)}
                   </h3>
                   <p className="mt-2 text-sm text-neutral-600">
                     {gameTypeLabel(game.type, t)} ·{' '}

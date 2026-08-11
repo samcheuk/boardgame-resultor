@@ -10,6 +10,7 @@ import { localizeError } from '../../../i18n/errors';
 import type { Locale } from '../../../i18n/LocaleContext';
 import { useLocale } from '../../../i18n/useLocale';
 import type { GameResultRecord } from '../../../types/record';
+import { getGameName } from '../../getGameName';
 import type { GamePageProps } from '../../loadGameView';
 import { wingspanOceaniaText } from '../i18n';
 import { WingspanOceaniaRecordForm } from './RecordForm';
@@ -72,7 +73,9 @@ function WingspanOceaniaRecordList({ game }: Pick<GamePageProps, 'game'>) {
   async function handleDelete(recordId: string) {
     if (
       !window.confirm(
-        wingspanOceaniaText(locale, 'deleteConfirm', { game: game.name }),
+        wingspanOceaniaText(locale, 'deleteConfirm', {
+          game: getGameName(game, locale),
+        }),
       )
     ) {
       return;

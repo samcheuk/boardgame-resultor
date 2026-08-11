@@ -1,5 +1,5 @@
 import type { GameConfig } from '../../types/game';
-import catanBgImage from './bg-image.webp';
+import bgImage from './bg-image.webp';
 
 export interface CatanMeta {
   expansions: string[];
@@ -9,12 +9,15 @@ export interface CatanMeta {
 export const catanConfig: GameConfig<CatanMeta> = {
   id: '13',
   slug: 'catan',
-  name: 'Catan',
+  name: {
+    en: 'Catan',
+    'zh-TW': '卡坦島',
+  },
   type: 'result',
   minPlayers: 3,
   maxPlayers: 4,
   bggUrl: 'https://boardgamegeek.com/boardgame/13/catan',
-  coverImage: catanBgImage,
+  coverImage: bgImage,
   meta: {
     expansions: ['Seafarers', 'Cities & Knights'],
   },

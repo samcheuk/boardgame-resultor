@@ -1,7 +1,7 @@
 import { useEffect, useState, type ComponentType } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { SaveStateForm } from '../components/forms/SaveStateForm';
-import { getGameById } from '../games';
+import { getGameById, getGameName } from '../games';
 import { loadGamePage, type GamePageProps } from '../games/loadGameView';
 import { useLocale } from '../i18n/useLocale';
 
@@ -32,7 +32,7 @@ interface GameViewProps {
 }
 
 export function GameView({ mode }: GameViewProps) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const { gameId, recordId } = useParams<{
     gameId: string;
     recordId?: string;
@@ -98,7 +98,9 @@ export function GameView({ mode }: GameViewProps) {
         </Link>
 
         <header className="mt-6 mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight">{game.name}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {getGameName(game, locale)}
+          </h1>
           <p className="mt-1 text-sm text-neutral-600">
             {t(
               game.type === 'result'

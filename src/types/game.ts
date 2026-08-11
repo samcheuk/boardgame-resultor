@@ -1,11 +1,17 @@
+import type { Locale } from '../i18n/LocaleContext';
+
 export type GameType = 'status' | 'result';
+
+/** Display strings keyed by app locale (EN / zh-TW). */
+export type LocalizedText = Record<Locale, string>;
 
 export interface GameConfig<TMeta = unknown> {
   /** BoardGameGeek item ID, e.g. "13" for Catan */
   id: string;
   /** Folder / code slug under src/games/, e.g. "catan" */
   slug: string;
-  name: string;
+  /** Localized display name */
+  name: LocalizedText;
   type: GameType;
   minPlayers: number;
   maxPlayers: number;

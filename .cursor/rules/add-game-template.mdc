@@ -24,7 +24,7 @@ src/games/<slug>/
 ## Required steps
 
 1. **Slug**: kebab-case folder name matching `GameConfig.slug` (e.g. `wingspan-oceania`).
-2. **`config.ts`**: Export `GameConfig` with BGG `id` (string), `slug`, `name`, `type`, `minPlayers`, `maxPlayers`, optional `bggUrl`, `coverImage`, and typed `meta`.
+2. **`config.ts`**: Export `GameConfig` with BGG `id` (string), `slug`, localized `name` (`{ en, 'zh-TW' }`), `type`, `minPlayers`, `maxPlayers`, optional `bggUrl`, `coverImage`, and typed `meta`. Use `getGameName(game, locale)` for display.
 3. **`i18n.ts`**: Game-local strings + helper (e.g. `wingspanText`) for EN / `zh-TW`.
 4. **`views/GamePage.tsx`**: List UI + create/edit modes; default export loaded via `loadGamePage(slug)`.
 5. **`views/RecordForm.tsx`**: Create/edit form for that game.

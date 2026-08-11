@@ -9,7 +9,10 @@ export interface GloomhavenMeta {
 export const gloomhavenConfig: GameConfig<GloomhavenMeta> = {
   id: '174430',
   slug: 'gloomhaven',
-  name: 'Gloomhaven',
+  name: {
+    en: 'Gloomhaven',
+    'zh-TW': '幽港迷城',
+  },
   type: 'status',
   minPlayers: 1,
   maxPlayers: 4,

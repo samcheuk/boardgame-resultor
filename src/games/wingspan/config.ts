@@ -9,7 +9,10 @@ export interface WingspanMeta {
 export const wingspanConfig: GameConfig<WingspanMeta> = {
   id: '266192',
   slug: 'wingspan',
-  name: 'Wingspan',
+  name: {
+    en: 'Wingspan',
+    'zh-TW': '展翅翱翔',
+  },
   type: 'result',
   minPlayers: 1,
   maxPlayers: 5,

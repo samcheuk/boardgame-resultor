@@ -4,6 +4,8 @@ import { gloomhavenConfig } from './gloomhaven/config';
 import { wingspanConfig } from './wingspan/config';
 import { wingspanOceaniaConfig } from './wingspan-oceania/config';
 
+export { getGameName } from './getGameName';
+
 export const games: GameConfig[] = [
   catanConfig,
   gloomhavenConfig,
