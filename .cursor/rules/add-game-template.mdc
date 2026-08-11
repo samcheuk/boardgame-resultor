@@ -5,14 +5,14 @@ alwaysApply: true
 
 # Adding a New Game
 
-When asked to add a game, follow this module template. Prefer `src/games/wingspan/` as the structural reference for result games.
+When asked to add a game, follow this module template. Prefer `src/games/266192-wingspan/` as the structural reference for result games.
 
 ## Required folder layout
 
-Create `src/games/<slug>/` with:
+Create `src/games/<id>-<slug>/` with:
 
 ```
-src/games/<slug>/
+src/games/<id>-<slug>/
   config.ts
   i18n.ts
   bg-image.webp
@@ -21,16 +21,18 @@ src/games/<slug>/
     RecordForm.tsx
 ```
 
+Example: BGG id `13`, slug `catan` → `src/games/13-catan/`.
+
 ## Required steps
 
-1. **Slug**: kebab-case folder name matching `GameConfig.slug` (e.g. `wingspan-oceania`).
-2. **`config.ts`**: Export `GameConfig` with BGG `id` (string), `slug`, localized `name` (`{ en, 'zh-TW' }`), `type`, `minPlayers`, `maxPlayers`, optional `bggUrl`, `coverImage`, and typed `meta`. Use `getGameName(game, locale)` for display.
+1. **Folder**: `{id}-{slug}` where `id` is the BGG item ID and `slug` is kebab-case (e.g. `13-catan`, `300580-wingspan-oceania`).
+2. **`config.ts`**: Export `GameConfig` with BGG `id` (string), short `slug` (without id prefix), localized `name` (`{ en, 'zh-TW' }`), `type`, `minPlayers`, `maxPlayers`, optional `bggUrl`, `coverImage`, and typed `meta`. Use `getGameName(game, locale)` for display. Folder path is `getGameModuleDir(game)` → `{id}-{slug}`.
 3. **`i18n.ts`**: Game-local strings + helper (e.g. `wingspanText`) for EN / `zh-TW`.
-4. **`views/GamePage.tsx`**: List UI + create/edit modes; default export loaded via `loadGamePage(slug)`.
+4. **`views/GamePage.tsx`**: List UI + create/edit modes; default export loaded via `loadGamePage(game)`.
 5. **`views/RecordForm.tsx`**: Create/edit form for that game.
 6. **`bg-image.webp`**: Copy the default cover from `src/games/bg-image.webp` into the new game folder:
    ```bash
-   cp src/games/bg-image.webp src/games/<slug>/bg-image.webp
+   cp src/games/bg-image.webp src/games/<id>-<slug>/bg-image.webp
    ```
    Wire it in `config.ts`:
    ```ts
@@ -42,8 +44,9 @@ src/games/<slug>/
 
 ## Rules
 
-- Keep all game-specific logic, UI, i18n, and assets inside `src/games/<slug>/`.
+- Keep all game-specific logic, UI, i18n, and assets inside `src/games/<id>-<slug>/`.
 - Do not put game-specific code in global `src/components/` or `src/pages/`.
 - `GameConfig.id` must be the BoardGameGeek item ID.
+- `GameConfig.slug` is the short name only (e.g. `catan`), not the folder prefix.
 - For result games, implement record list + FAB add flow using shared `ResultGamePage` / `FloatingAddButton` where appropriate.
 - Propose the file list first if the game needs a different structure (e.g. status-only games), then wait for confirmation.

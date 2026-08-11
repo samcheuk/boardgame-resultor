@@ -54,7 +54,7 @@ export function GameView({ mode }: GameViewProps) {
     let cancelled = false;
     setLoadingView(true);
 
-    void loadGamePage(game.slug).then((CustomPage) => {
+    void loadGamePage(game).then((CustomPage) => {
       if (cancelled) {
         return;
       }

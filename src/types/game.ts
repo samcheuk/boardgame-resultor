@@ -8,7 +8,10 @@ export type LocalizedText = Record<Locale, string>;
 export interface GameConfig<TMeta = unknown> {
   /** BoardGameGeek item ID, e.g. "13" for Catan */
   id: string;
-  /** Folder / code slug under src/games/, e.g. "catan" */
+  /**
+   * Short kebab-case code name, e.g. "catan".
+   * Module folder is `{id}-{slug}` under src/games/ (e.g. `13-catan`).
+   */
   slug: string;
   /** Localized display name */
   name: LocalizedText;

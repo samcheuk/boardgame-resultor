@@ -31,8 +31,8 @@ src/
   types/            # GameConfig 等型別
 ```
 
-遊戲專屬邏輯／UI／assets 應放喺 `src/games/[slug]/`。  
-`GameConfig.id` = BoardGameGeek item ID（例如 Catan = `13`），`slug` 用嚟對應資料夾名。
+遊戲專屬邏輯／UI／assets 應放喺 `src/games/<id>-<slug>/`（例如 `13-catan`）。  
+`GameConfig.id` = BoardGameGeek item ID（例如 Catan = `13`），`slug` 係短名（例如 `catan`），資料夾名 = `{id}-{slug}`。
 
 ## Local Setup
 
@@ -175,12 +175,12 @@ service cloud.firestore {
 
 ## Adding a Game
 
-1. 新增 `src/games/<slug>/config.ts`：
+1. 新增 `src/games/<id>-<slug>/config.ts`（例如 `13-catan`）：
    - `id` = BGG item ID（字串，例如 `"13"`）
-   - `slug` = 資料夾名
+   - `slug` = 短 kebab 名（例如 `catan`；唔包 id）
    - `type`: `'result'` | `'status'`
 2. 喺 `src/games/index.ts` 登記到 `games` 陣列
-3. Result 遊戲可加 `src/games/<slug>/views/GamePage.tsx`（list + form）；可重用 `ResultGamePage` + `FloatingAddButton`
+3. Result 遊戲可加 `src/games/<id>-<slug>/views/GamePage.tsx`（list + form）；可重用 `ResultGamePage` + `FloatingAddButton`
 4. Firestore `game_results` 文件用 `gameId` 欄位存 BGG id
 
 ## Notes
