@@ -38,56 +38,54 @@ export function LanguageSelector() {
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-end px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pr-[max(0.75rem,env(safe-area-inset-right))]">
-      <div ref={containerRef} className="pointer-events-auto relative">
-        <button
-          type="button"
-          aria-haspopup="listbox"
-          aria-expanded={open}
-          aria-controls={listId}
-          aria-label={t('language.label')}
-          onClick={() => {
-            setOpen((current) => !current);
-          }}
-          className="inline-flex min-h-11 min-w-[7.5rem] items-center justify-between gap-2 rounded-lg border border-neutral-300 bg-white/95 px-3 text-sm font-medium text-neutral-800 shadow-sm backdrop-blur transition hover:border-neutral-400"
-        >
-          <span className="truncate">{currentLabel}</span>
-          <span aria-hidden className="text-neutral-500">
-            ▾
-          </span>
-        </button>
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-label={t('language.label')}
+        onClick={() => {
+          setOpen((current) => !current);
+        }}
+        className="inline-flex min-h-11 min-w-[7.5rem] items-center justify-between gap-2 rounded-lg border border-neutral-300 bg-white/95 px-3 text-sm font-medium text-neutral-800 shadow-sm backdrop-blur transition hover:border-neutral-400 dark:border-neutral-600 dark:bg-neutral-900/95 dark:text-neutral-100 dark:hover:border-neutral-500"
+      >
+        <span className="truncate">{currentLabel}</span>
+        <span aria-hidden className="text-neutral-500 dark:text-neutral-400">
+          ▾
+        </span>
+      </button>
 
-        {open ? (
-          <ul
-            id={listId}
-            role="listbox"
-            aria-label={t('language.label')}
-            className="absolute right-0 z-50 mt-1 max-h-[min(16rem,50vh)] min-w-full overflow-auto rounded-lg border border-neutral-200 bg-white py-1 shadow-lg"
-          >
-            {OPTIONS.map((option) => {
-              const selected = locale === option.value;
-              return (
-                <li key={option.value} role="option" aria-selected={selected}>
-                  <button
-                    type="button"
-                    className={`flex min-h-11 w-full items-center px-3 text-left text-sm ${
-                      selected
-                        ? 'bg-neutral-100 font-medium text-neutral-900'
-                        : 'text-neutral-700 hover:bg-neutral-50'
-                    }`}
-                    onClick={() => {
-                      setLocale(option.value);
-                      setOpen(false);
-                    }}
-                  >
-                    {option.label}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        ) : null}
-      </div>
+      {open ? (
+        <ul
+          id={listId}
+          role="listbox"
+          aria-label={t('language.label')}
+          className="absolute right-0 z-50 mt-1 max-h-[min(16rem,50vh)] min-w-full overflow-auto rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
+        >
+          {OPTIONS.map((option) => {
+            const selected = locale === option.value;
+            return (
+              <li key={option.value} role="option" aria-selected={selected}>
+                <button
+                  type="button"
+                  className={`flex min-h-11 w-full items-center px-3 text-left text-sm ${
+                    selected
+                      ? 'bg-neutral-100 font-medium text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50'
+                      : 'text-neutral-700 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-800'
+                  }`}
+                  onClick={() => {
+                    setLocale(option.value);
+                    setOpen(false);
+                  }}
+                >
+                  {option.label}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
     </div>
   );
 }

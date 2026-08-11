@@ -2,6 +2,9 @@ import type { TranslationKey } from './en';
 
 export const zhTW = {
   'language.label': '語言',
+  'theme.label': '主題',
+  'theme.light': '淺色模式',
+  'theme.dark': '深色模式',
   'common.loading': '載入中...',
   'common.edit': '編輯',
   'common.delete': '刪除',

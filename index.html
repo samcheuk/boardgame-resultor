@@ -18,6 +18,29 @@
         }
       })();
     </script>
+    <script>
+      // Apply saved theme/locale before paint to avoid a flash of wrong prefs.
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem('boardgame-resultor-theme');
+          var theme =
+            storedTheme === 'light' || storedTheme === 'dark'
+              ? storedTheme
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          }
+          document.documentElement.style.colorScheme = theme;
+
+          var storedLocale = localStorage.getItem('boardgame-resultor-locale');
+          if (storedLocale === 'en' || storedLocale === 'zh-TW') {
+            document.documentElement.lang = storedLocale;
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

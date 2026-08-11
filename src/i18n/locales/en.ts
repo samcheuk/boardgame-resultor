@@ -1,5 +1,8 @@
 export const en = {
   'language.label': 'Language',
+  'theme.label': 'Theme',
+  'theme.light': 'Light mode',
+  'theme.dark': 'Dark mode',
   'common.loading': 'Loading...',
   'common.edit': 'Edit',
   'common.delete': 'Delete',

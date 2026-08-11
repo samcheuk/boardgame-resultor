@@ -6,23 +6,35 @@ import {
 } from './LocaleContext';
 import { translate } from './translate';
 
-const COOKIE_NAME = 'boardgame-resultor-locale';
-const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
+const STORAGE_KEY = 'boardgame-resultor-locale';
 
-function readLocaleCookie(): Locale {
-  const cookie = document.cookie
-    .split('; ')
-    .find((item) => item.startsWith(`${COOKIE_NAME}=`));
-  const value = cookie?.slice(COOKIE_NAME.length + 1);
-  return value === 'zh-TW' || value === 'en' ? value : 'en';
+function isLocale(value: string | null): value is Locale {
+  return value === 'en' || value === 'zh-TW';
+}
+
+function readStoredLocale(): Locale {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (isLocale(stored)) {
+      return stored;
+    }
+  } catch {
+    // Ignore storage access errors (private mode, etc.).
+  }
+
+  return 'en';
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>(readLocaleCookie);
+  const [locale, setLocale] = useState<Locale>(readStoredLocale);
 
   useEffect(() => {
-    document.cookie = `${COOKIE_NAME}=${locale}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`;
     document.documentElement.lang = locale;
+    try {
+      localStorage.setItem(STORAGE_KEY, locale);
+    } catch {
+      // Ignore storage write errors.
+    }
   }, [locale]);
 
   const value = useMemo<LocaleContextValue>(

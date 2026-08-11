@@ -85,7 +85,7 @@ export function GameView({ mode }: GameViewProps) {
             className="absolute inset-0 bg-cover bg-bottom bg-no-repeat opacity-40"
             style={{ backgroundImage: `url(${game.coverImage})` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/88 to-white/35" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/88 to-white/35 dark:from-neutral-950 dark:via-neutral-950/88 dark:to-neutral-950/35" />
         </div>
       ) : null}
 
