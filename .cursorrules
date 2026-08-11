@@ -14,8 +14,8 @@ This is a web app hosted on GitHub Pages (`github.io`) for tracking board game r
 - The app supports multiple games, each having its own configuration and assets.
 
 # Architecture & Constraints
-1. **Game Modules**: All game-specific logic, configs, UI components, and local assets MUST live inside `src/games/[GameName]/`. Do not pollute global components with game-specific logic.
-2. **Game Config**: Each game must have a `config.ts` exporting a standard interface (e.g., `id`, `name`, `type: 'result' | 'status'`, `coverImage`).
+1. **Game Modules**: All game-specific logic, configs, UI components, and local assets MUST live inside `src/games/<slug>/`. Do not pollute global components with game-specific logic.
+2. **Game Config / Add-game template**: Each game must follow the module template (`config.ts`, `i18n.ts`, `views/GamePage.tsx`, `views/RecordForm.tsx`, `bg-image.webp`). Copy the default cover from `src/games/bg-image.webp`. Register in `src/games/index.ts`. See `.cursor/rules/add-game-template.mdc`.
 3. **Auth & Whitelist**: Users must sign in with Google. Before granting access to the app, verify if their email exists in the `whitelist` Firestore collection (or a hardcoded env array if requested). Unauthenticated or non-whitelisted users must be redirected to the Login page.
 4. **TypeScript Strictness**: Use explicit typings. Avoid `any`. Use generic types for Firebase responses where possible.
 5. **Vibe Coding**: When asked to implement a feature, break it down logically, propose the necessary file changes, and wait for confirmation if the implementation involves structural changes.

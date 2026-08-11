@@ -1,0 +1,49 @@
+---
+description: Template and checklist when adding a new game module
+alwaysApply: true
+---
+
+# Adding a New Game
+
+When asked to add a game, follow this module template. Prefer `src/games/wingspan/` as the structural reference for result games.
+
+## Required folder layout
+
+Create `src/games/<slug>/` with:
+
+```
+src/games/<slug>/
+  config.ts
+  i18n.ts
+  bg-image.webp
+  views/
+    GamePage.tsx
+    RecordForm.tsx
+```
+
+## Required steps
+
+1. **Slug**: kebab-case folder name matching `GameConfig.slug` (e.g. `wingspan-oceania`).
+2. **`config.ts`**: Export `GameConfig` with BGG `id` (string), `slug`, `name`, `type`, `minPlayers`, `maxPlayers`, optional `bggUrl`, `coverImage`, and typed `meta`.
+3. **`i18n.ts`**: Game-local strings + helper (e.g. `wingspanText`) for EN / `zh-TW`.
+4. **`views/GamePage.tsx`**: List UI + create/edit modes; default export loaded via `loadGamePage(slug)`.
+5. **`views/RecordForm.tsx`**: Create/edit form for that game.
+6. **`bg-image.webp`**: Copy the default cover from `src/games/bg-image.webp` into the new game folder:
+   ```bash
+   cp src/games/bg-image.webp src/games/<slug>/bg-image.webp
+   ```
+   Wire it in `config.ts`:
+   ```ts
+   import bgImage from './bg-image.webp';
+   // ...
+   coverImage: bgImage,
+   ```
+7. **Register** the config in `src/games/index.ts` (`games` array).
+
+## Rules
+
+- Keep all game-specific logic, UI, i18n, and assets inside `src/games/<slug>/`.
+- Do not put game-specific code in global `src/components/` or `src/pages/`.
+- `GameConfig.id` must be the BoardGameGeek item ID.
+- For result games, implement record list + FAB add flow using shared `ResultGamePage` / `FloatingAddButton` where appropriate.
+- Propose the file list first if the game needs a different structure (e.g. status-only games), then wait for confirmation.
