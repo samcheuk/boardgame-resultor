@@ -14,7 +14,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (loading) {
     return (
       <main className="flex min-h-svh items-center justify-center">
-        <p className="text-sm text-neutral-500">{t('common.loading')}</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          {t('common.loading')}
+        </p>
       </main>
     );
   }

@@ -253,7 +253,9 @@ export function WingspanOceaniaRecordForm({
 
   if (loading) {
     return (
-      <p className="text-sm text-neutral-500">{t('records.loadingForm')}</p>
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+        {t('records.loadingForm')}
+      </p>
     );
   }
 
@@ -267,7 +269,7 @@ export function WingspanOceaniaRecordForm({
         </h2>
         <Link
           to={`/game/${game.id}`}
-          className="text-sm text-neutral-500 hover:text-neutral-800"
+          className="text-sm text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
         >
           {t('common.cancel')}
         </Link>
@@ -275,7 +277,7 @@ export function WingspanOceaniaRecordForm({
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-neutral-700">
+          <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
             {t('records.dateTime')}
           </span>
           <input
@@ -284,7 +286,7 @@ export function WingspanOceaniaRecordForm({
             onChange={(event) => {
               setPlayedAt(event.target.value);
             }}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:[color-scheme:dark]"
             required
           />
         </label>
@@ -293,10 +295,10 @@ export function WingspanOceaniaRecordForm({
           {players.map((player, playerIndex) => (
             <fieldset
               key={playerIndex}
-              className="rounded-lg border border-neutral-200 bg-white p-4"
+              className="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900"
             >
               <div className="mb-4 flex items-center justify-between">
-                <legend className="font-medium text-neutral-900">
+                <legend className="font-medium text-neutral-900 dark:text-neutral-50">
                   {wingspanOceaniaText(locale, 'player', {
                     number: playerIndex + 1,
                   })}
@@ -309,7 +311,7 @@ export function WingspanOceaniaRecordForm({
                         current.filter((_, index) => index !== playerIndex),
                       );
                     }}
-                    className="text-xs text-red-600 hover:text-red-800"
+                    className="text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                   >
                     {t('common.remove')}
                   </button>
@@ -317,7 +319,7 @@ export function WingspanOceaniaRecordForm({
               </div>
 
               <div className="mb-4 space-y-1.5">
-                <span className="text-xs text-neutral-500">
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
                   {wingspanOceaniaText(locale, 'playerName')}
                 </span>
                 <PlayerNameField
@@ -338,7 +340,7 @@ export function WingspanOceaniaRecordForm({
               <div className="grid gap-3 sm:grid-cols-2">
                 {SCORE_CATEGORIES.map(({ key, translationKey }) => (
                   <label key={key} className="space-y-1.5">
-                    <span className="text-xs text-neutral-500">
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
                       {wingspanOceaniaText(locale, translationKey)}
                     </span>
                     <input
@@ -352,14 +354,14 @@ export function WingspanOceaniaRecordForm({
                           scores: { ...current.scores, [key]: value },
                         }));
                       }}
-                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 dark:border-neutral-600 dark:bg-neutral-950 dark:text-neutral-100"
                       placeholder="0"
                     />
                   </label>
                 ))}
               </div>
 
-              <p className="mt-4 border-t border-neutral-100 pt-3 text-right text-sm font-semibold">
+              <p className="mt-4 border-t border-neutral-100 pt-3 text-right text-sm font-semibold dark:border-neutral-800">
                 {wingspanOceaniaText(locale, 'total', {
                   points: getTotal(player.scores),
                 })}
@@ -374,14 +376,14 @@ export function WingspanOceaniaRecordForm({
             onClick={() => {
               setPlayers((current) => [...current, createEmptyPlayer()]);
             }}
-            className="rounded-md border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50"
+            className="rounded-md border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50 dark:border-neutral-600 dark:hover:bg-neutral-800"
           >
             {wingspanOceaniaText(locale, 'addPlayer')}
           </button>
         ) : null}
 
         {error ? (
-          <p className="text-sm text-red-600" role="alert">
+          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
             {error}
           </p>
         ) : null}
@@ -389,7 +391,7 @@ export function WingspanOceaniaRecordForm({
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+          className="rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
         >
           {saving
             ? t('records.saving')

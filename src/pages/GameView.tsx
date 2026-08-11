@@ -11,14 +11,14 @@ function FallbackGamePage({ game, mode }: GamePageProps) {
   if (game.type === 'result') {
     if (mode !== 'list') {
       return (
-        <p className="text-sm text-neutral-500">
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
           {t('game.resultFormUnavailable')}
         </p>
       );
     }
 
     return (
-      <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-10 text-center text-sm text-neutral-500">
+      <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-10 text-center text-sm text-neutral-500 dark:border-neutral-600 dark:text-neutral-400">
         {t('game.resultUiUnavailable')}
       </p>
     );
@@ -92,7 +92,7 @@ export function GameView({ mode }: GameViewProps) {
       <div className="relative mx-auto w-full max-w-4xl px-4 pt-[max(4.5rem,calc(env(safe-area-inset-top)+3.5rem))] pb-8">
         <Link
           to="/"
-          className="text-sm text-neutral-500 transition hover:text-neutral-800"
+          className="text-sm text-neutral-500 transition hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
         >
           {t('game.backToGames')}
         </Link>
@@ -101,7 +101,7 @@ export function GameView({ mode }: GameViewProps) {
           <h1 className="text-2xl font-semibold tracking-tight">
             {getGameName(game, locale)}
           </h1>
-          <p className="mt-1 text-sm text-neutral-600">
+          <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
             {t(
               game.type === 'result'
                 ? 'game.type.result'
@@ -119,7 +119,7 @@ export function GameView({ mode }: GameViewProps) {
                   href={game.bggUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="underline hover:text-neutral-800"
+                  className="underline hover:text-neutral-800 dark:hover:text-neutral-100"
                 >
                   {t('game.boardGameGeek')}
                 </a>
@@ -129,7 +129,9 @@ export function GameView({ mode }: GameViewProps) {
         </header>
 
         {loadingView ? (
-          <p className="text-sm text-neutral-500">{t('game.loading')}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            {t('game.loading')}
+          </p>
         ) : (
           <Page game={game} mode={mode} recordId={recordId} />
         )}

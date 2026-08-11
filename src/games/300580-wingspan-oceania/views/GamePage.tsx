@@ -102,7 +102,7 @@ function WingspanOceaniaRecordList({ game }: Pick<GamePageProps, 'game'>) {
       }}
     >
       {error ? (
-        <p className="mb-4 text-sm text-red-600" role="alert">
+        <p className="mb-4 text-sm text-red-600 dark:text-red-400" role="alert">
           {error}
         </p>
       ) : null}
@@ -115,21 +115,21 @@ function WingspanOceaniaRecordList({ game }: Pick<GamePageProps, 'game'>) {
           return (
             <li
               key={record.id}
-              className="rounded-lg border border-neutral-200 bg-white p-4"
+              className="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-neutral-900">
+                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-50">
                     {formatPlayedDate(record.playedAt, locale)}
                   </p>
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {formatPlayedTime(record.playedAt, locale)}
                   </p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <Link
                     to={`/game/${game.id}/edit/${record.id}`}
-                    className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs hover:bg-neutral-50"
+                    className="rounded-md border border-neutral-300 px-3 py-1.5 text-xs hover:bg-neutral-50 dark:border-neutral-600 dark:hover:bg-neutral-800"
                   >
                     {t('common.edit')}
                   </Link>
@@ -139,7 +139,7 @@ function WingspanOceaniaRecordList({ game }: Pick<GamePageProps, 'game'>) {
                     onClick={() => {
                       void handleDelete(record.id);
                     }}
-                    className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-700 hover:bg-red-50 disabled:opacity-50"
+                    className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-700 hover:bg-red-50 disabled:opacity-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
                   >
                     {deletingId === record.id
                       ? t('common.deleting')
@@ -148,19 +148,19 @@ function WingspanOceaniaRecordList({ game }: Pick<GamePageProps, 'game'>) {
                 </div>
               </div>
 
-              <ol className="mt-3 space-y-1.5 border-t border-neutral-100 pt-3">
+              <ol className="mt-3 space-y-1.5 border-t border-neutral-100 pt-3 dark:border-neutral-800">
                 {rankedPlayers.map((player, index) => (
                   <li
                     key={`${record.id}-${player.email ?? player.name}-${index}`}
                     className="flex items-baseline justify-between gap-3 text-sm"
                   >
-                    <span className="min-w-0 truncate text-neutral-700">
-                      <span className="mr-2 text-neutral-400">
+                    <span className="min-w-0 truncate text-neutral-700 dark:text-neutral-300">
+                      <span className="mr-2 text-neutral-400 dark:text-neutral-500">
                         {t('common.rank', { rank: index + 1 })}
                       </span>
                       {player.name}
                     </span>
-                    <span className="shrink-0 font-medium text-neutral-900">
+                    <span className="shrink-0 font-medium text-neutral-900 dark:text-neutral-50">
                       {t('common.points', { points: player.points })}
                     </span>
                   </li>

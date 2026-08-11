@@ -204,7 +204,9 @@ export function CatanRecordForm({
 
   if (loading) {
     return (
-      <p className="text-sm text-neutral-500">{t('records.loadingForm')}</p>
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+        {t('records.loadingForm')}
+      </p>
     );
   }
 
@@ -218,7 +220,7 @@ export function CatanRecordForm({
         </h2>
         <Link
           to={`/game/${game.id}`}
-          className="text-sm text-neutral-500 hover:text-neutral-800"
+          className="text-sm text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
         >
           {t('common.cancel')}
         </Link>
@@ -226,7 +228,7 @@ export function CatanRecordForm({
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-neutral-700">
+          <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
             {t('records.dateTime')}
           </span>
           <input
@@ -235,16 +237,16 @@ export function CatanRecordForm({
             onChange={(event) => {
               setPlayedAt(event.target.value);
             }}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:[color-scheme:dark]"
             required
           />
         </label>
 
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-neutral-700">
+          <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
             {catanText(locale, 'playersAndPoints')}
           </h3>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
             {catanText(locale, 'playerInstructions', {
               min: game.minPlayers,
               max: game.maxPlayers,
@@ -254,10 +256,13 @@ export function CatanRecordForm({
           {players.map((player, index) => (
             <div key={index} className="flex items-end gap-2">
               <div className="min-w-0 flex-1 space-y-1.5">
-                <span className="text-xs text-neutral-500">
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
                   {catanText(locale, 'player', { number: index + 1 })}
                   {player.email ? (
-                    <span className="text-neutral-400"> · {player.email}</span>
+                    <span className="text-neutral-400 dark:text-neutral-500">
+                      {' '}
+                      · {player.email}
+                    </span>
                   ) : null}
                 </span>
                 <PlayerNameField
@@ -271,7 +276,7 @@ export function CatanRecordForm({
                 />
               </div>
               <label className="w-24 space-y-1.5">
-                <span className="text-xs text-neutral-500">
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
                   {catanText(locale, 'points')}
                 </span>
                 <input
@@ -283,7 +288,7 @@ export function CatanRecordForm({
                       points: Number(event.target.value),
                     });
                   }}
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+                  className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100"
                 />
               </label>
             </div>
@@ -291,7 +296,7 @@ export function CatanRecordForm({
         </div>
 
         {error ? (
-          <p className="text-sm text-red-600" role="alert">
+          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
             {error}
           </p>
         ) : null}
@@ -299,7 +304,7 @@ export function CatanRecordForm({
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+          className="rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
         >
           {saving
             ? t('records.saving')

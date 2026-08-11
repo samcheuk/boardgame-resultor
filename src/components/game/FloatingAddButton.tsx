@@ -16,7 +16,7 @@ export function FloatingAddButton({
       type="button"
       onClick={onClick}
       aria-label={label ?? t('records.add')}
-      className="fixed right-5 bottom-5 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-neutral-900 text-2xl text-white shadow-lg transition hover:bg-neutral-700"
+      className="fixed right-5 bottom-5 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-neutral-900 text-2xl text-white shadow-lg transition hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
     >
       +
     </button>

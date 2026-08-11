@@ -123,7 +123,7 @@ export function PlayerNameField({
           }
         }}
         placeholder={t('playerName.placeholder')}
-        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+        className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100"
         required={false}
         autoComplete="off"
       />
@@ -132,16 +132,18 @@ export function PlayerNameField({
         <ul
           id={listboxId}
           role="listbox"
-          className="absolute z-30 mt-1 max-h-48 w-full overflow-auto rounded-md border border-neutral-200 bg-white py-1 shadow-lg"
+          className="absolute z-30 mt-1 max-h-48 w-full overflow-auto rounded-md border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
         >
           {loadError ? (
-            <li className="px-3 py-2 text-sm text-red-600">{loadError}</li>
+            <li className="px-3 py-2 text-sm text-red-600 dark:text-red-400">
+              {loadError}
+            </li>
           ) : options.length === 0 ? (
-            <li className="px-3 py-2 text-sm text-neutral-400">
+            <li className="px-3 py-2 text-sm text-neutral-400 dark:text-neutral-500">
               {t('playerName.emptyWhitelist')}
             </li>
           ) : filteredOptions.length === 0 ? (
-            <li className="px-3 py-2 text-sm text-neutral-400">
+            <li className="px-3 py-2 text-sm text-neutral-400 dark:text-neutral-500">
               {t('playerName.noMatch')}
             </li>
           ) : (
@@ -155,8 +157,8 @@ export function PlayerNameField({
                   type="button"
                   className={`block w-full px-3 py-2 text-left text-sm ${
                     index === highlightIndex
-                      ? 'bg-neutral-100 text-neutral-900'
-                      : 'text-neutral-700 hover:bg-neutral-50'
+                      ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50'
+                      : 'text-neutral-700 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-800'
                   }`}
                   onMouseEnter={() => {
                     setHighlightIndex(index);
@@ -167,7 +169,7 @@ export function PlayerNameField({
                   }}
                 >
                   <span className="block font-medium">{option.name}</span>
-                  <span className="block text-xs text-neutral-500">
+                  <span className="block text-xs text-neutral-500 dark:text-neutral-400">
                     {option.email}
                   </span>
                 </button>

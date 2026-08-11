@@ -28,17 +28,19 @@ export function ResultGamePage({
   return (
     <section className="relative pb-24">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-sm font-medium text-neutral-500">
+        <h2 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
           {title ?? t('records.title')}
         </h2>
       </div>
 
       {loading ? (
-        <p className="text-sm text-neutral-500">{t('records.loading')}</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          {t('records.loading')}
+        </p>
       ) : null}
 
       {!loading && isEmpty ? (
-        <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-10 text-center text-sm text-neutral-500">
+        <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-10 text-center text-sm text-neutral-500 dark:border-neutral-600 dark:text-neutral-400">
           {emptyMessage ?? t('records.empty')}
         </p>
       ) : null}
