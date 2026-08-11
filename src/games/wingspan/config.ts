@@ -1,4 +1,5 @@
 import type { GameConfig } from '../../types/game';
+import bgImage from './bg-image.webp';
 
 export interface WingspanMeta {
   scoreCategories: string[];
@@ -13,6 +14,7 @@ export const wingspanConfig: GameConfig<WingspanMeta> = {
   minPlayers: 1,
   maxPlayers: 5,
   bggUrl: 'https://boardgamegeek.com/boardgame/266192/wingspan',
+  coverImage: bgImage,
   meta: {
     scoreCategories: [
       'birds',
