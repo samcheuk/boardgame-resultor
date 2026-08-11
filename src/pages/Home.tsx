@@ -14,14 +14,14 @@ export function Home() {
   const { t } = useLocale();
 
   return (
-    <main className="mx-auto min-h-svh w-full max-w-5xl px-4 pt-20 pb-8">
-      <header className="mb-8 flex items-center justify-between gap-4">
-        <div>
+    <main className="mx-auto min-h-svh w-full max-w-5xl px-4 pt-[max(4.5rem,calc(env(safe-area-inset-top)+3.5rem))] pb-8">
+      <header className="mb-8 flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-semibold tracking-tight">
             Boardgame Tracker
           </h1>
           {user?.email ? (
-            <p className="mt-1 text-sm text-neutral-500">{user.email}</p>
+            <p className="mt-1 truncate text-sm text-neutral-500">{user.email}</p>
           ) : null}
         </div>
         <button
@@ -29,7 +29,7 @@ export function Home() {
           onClick={() => {
             void signOut();
           }}
-          className="rounded-md border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50"
+          className="shrink-0 rounded-md border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50"
         >
           {t('auth.signOut')}
         </button>

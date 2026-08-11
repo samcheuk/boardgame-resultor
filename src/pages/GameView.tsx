@@ -89,7 +89,7 @@ export function GameView({ mode }: GameViewProps) {
         </div>
       ) : null}
 
-      <div className="relative mx-auto w-full max-w-4xl px-4 pt-20 pb-8">
+      <div className="relative mx-auto w-full max-w-4xl px-4 pt-[max(4.5rem,calc(env(safe-area-inset-top)+3.5rem))] pb-8">
         <Link
           to="/"
           className="text-sm text-neutral-500 transition hover:text-neutral-800"

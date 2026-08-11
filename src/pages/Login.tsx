@@ -20,7 +20,7 @@ export function Login() {
   }
 
   return (
-    <main className="flex min-h-svh flex-col items-center justify-center gap-6 px-4">
+    <main className="flex min-h-svh flex-col items-center justify-center gap-6 px-4 pt-[max(4.5rem,calc(env(safe-area-inset-top)+3.5rem))]">
       <h1 className="text-2xl font-semibold tracking-tight">Boardgame Tracker</h1>
       <p className="text-sm text-neutral-500">{t('auth.signInPrompt')}</p>
 

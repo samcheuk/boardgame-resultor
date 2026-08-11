@@ -5,6 +5,19 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Boardgame Tracker</title>
+    <script>
+      // GitHub Pages: support /boardgame-tracker and /boardgame-tracker/
+      (function () {
+        var path = window.location.pathname;
+        if (path === '/boardgame-tracker') {
+          window.location.replace(
+            '/boardgame-tracker/' +
+              window.location.search +
+              window.location.hash,
+          );
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
