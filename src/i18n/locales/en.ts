@@ -21,6 +21,8 @@ export const en = {
     'Google sign-in is not configured. Add VITE_GOOGLE_CLIENT_ID to .env.local.',
   'auth.signInCancelled': 'Google sign-in was cancelled.',
   'home.games': 'Games',
+  'home.searchPlaceholder': 'Search games...',
+  'home.noSearchResults': 'No games match your search.',
   'game.type.status': 'Status Saving',
   'game.type.result': 'Result Record',
   'game.backToGames': '← Back to games',

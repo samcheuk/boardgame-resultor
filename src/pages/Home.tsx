@@ -1,6 +1,7 @@
+import { useDeferredValue, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { games, getGameName } from '../games';
+import { filterAndSortGames, games, getGameName } from '../games';
 import type { Translate } from '../i18n/LocaleContext';
 import { useLocale } from '../i18n/useLocale';
 import type { GameType } from '../types/game';
@@ -12,6 +13,9 @@ function gameTypeLabel(type: GameType, t: Translate): string {
 export function Home() {
   const { user, signOut } = useAuth();
   const { locale, t } = useLocale();
+  const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
+  const filteredGames = filterAndSortGames(games, deferredQuery);
 
   return (
     <main className="mx-auto min-h-svh w-full max-w-5xl px-4 pt-[max(4.5rem,calc(env(safe-area-inset-top)+3.5rem))] pb-8">
@@ -36,42 +40,64 @@ export function Home() {
       </header>
 
       <section>
-        <h2 className="mb-4 text-sm font-medium text-neutral-500">
-          {t('home.games')}
-        </h2>
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {games.map((game) => (
-            <li key={game.id}>
-              <Link
-                to={`/game/${game.id}`}
-                className="relative block overflow-hidden rounded-lg border border-neutral-200 bg-white p-5 transition hover:border-neutral-400"
-              >
-                {game.coverImage ? (
-                  <>
-                    <div
-                      aria-hidden
-                      className="absolute inset-0 bg-cover bg-right bg-no-repeat opacity-45"
-                      style={{ backgroundImage: `url(${game.coverImage})` }}
-                    />
-                    <div
-                      aria-hidden
-                      className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/25"
-                    />
-                  </>
-                ) : null}
-                <div className="relative">
-                  <h3 className="text-lg font-semibold text-neutral-900">
-                    {getGameName(game, locale)}
-                  </h3>
-                  <p className="mt-2 text-sm text-neutral-600">
-                    {gameTypeLabel(game.type, t)} ·{' '}
-                    {t('game.bggId', { id: game.id })}
-                  </p>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="text-sm font-medium text-neutral-500">
+            {t('home.games')} ({filteredGames.length})
+          </h2>
+          <label className="block w-full sm:max-w-xs">
+            <span className="sr-only">{t('home.searchPlaceholder')}</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+              }}
+              placeholder={t('home.searchPlaceholder')}
+              autoComplete="off"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none"
+            />
+          </label>
+        </div>
+
+        {filteredGames.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-10 text-center text-sm text-neutral-500">
+            {t('home.noSearchResults')}
+          </p>
+        ) : (
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredGames.map((game) => (
+              <li key={game.id}>
+                <Link
+                  to={`/game/${game.id}`}
+                  className="relative block overflow-hidden rounded-lg border border-neutral-200 bg-white p-5 transition hover:border-neutral-400"
+                >
+                  {game.coverImage ? (
+                    <>
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 bg-cover bg-right bg-no-repeat opacity-45"
+                        style={{ backgroundImage: `url(${game.coverImage})` }}
+                      />
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/25"
+                      />
+                    </>
+                  ) : null}
+                  <div className="relative">
+                    <h3 className="text-lg font-semibold text-neutral-900">
+                      {getGameName(game, locale)}
+                    </h3>
+                    <p className="mt-2 text-sm text-neutral-600">
+                      {gameTypeLabel(game.type, t)} ·{' '}
+                      {t('game.bggId', { id: game.id })}
+                    </p>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );

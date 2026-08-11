@@ -5,6 +5,7 @@ import { wingspanConfig } from './wingspan/config';
 import { wingspanOceaniaConfig } from './wingspan-oceania/config';
 
 export { getGameName } from './getGameName';
+export { filterAndSortGames, scoreGameSearch } from './searchGames';
 
 export const games: GameConfig[] = [
   catanConfig,

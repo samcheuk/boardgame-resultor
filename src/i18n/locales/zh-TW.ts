@@ -22,6 +22,8 @@ export const zhTW = {
     'Google 登入尚未設定。請在 .env.local 加入 VITE_GOOGLE_CLIENT_ID。',
   'auth.signInCancelled': 'Google 登入已取消。',
   'home.games': '遊戲',
+  'home.searchPlaceholder': '搜尋遊戲...',
+  'home.noSearchResults': '沒有符合的遊戲。',
   'game.type.status': '進度儲存',
   'game.type.result': '賽果紀錄',
   'game.backToGames': '← 返回遊戲列表',
