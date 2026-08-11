@@ -9,7 +9,7 @@ const en = {
   eggs: 'Eggs',
   cachedFood: 'Cached food',
   tuckedCards: 'Tucked cards',
-  nectar: 'Nectar (Oceania)',
+  nectar: 'Nectar',
   player: 'Player {{number}}',
   playerName: 'Player name',
   addPlayer: '+ Add player',
@@ -18,11 +18,11 @@ const en = {
   invalidScores: 'Scores must be zero or positive numbers.',
 } as const;
 
-export type WingspanTranslationKey = keyof typeof en;
+export type WingspanOceaniaTranslationKey = keyof typeof en;
 
 const messages: Record<
   Locale,
-  Record<WingspanTranslationKey, string>
+  Record<WingspanOceaniaTranslationKey, string>
 > = {
   en,
   'zh-TW': {
@@ -33,7 +33,7 @@ const messages: Record<
     eggs: '蛋',
     cachedFood: '鳥卡上的食物',
     tuckedCards: '塞在鳥下的卡牌',
-    nectar: '花蜜（大洋洲擴充）',
+    nectar: '花蜜',
     player: '玩家 {{number}}',
     playerName: '玩家名稱',
     addPlayer: '+ 新增玩家',
@@ -43,9 +43,9 @@ const messages: Record<
   },
 };
 
-export function wingspanText(
+export function wingspanOceaniaText(
   locale: Locale,
-  key: WingspanTranslationKey,
+  key: WingspanOceaniaTranslationKey,
   params?: TranslationParams,
 ): string {
   return interpolate(messages[locale][key], params);

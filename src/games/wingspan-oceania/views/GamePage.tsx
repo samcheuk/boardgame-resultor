@@ -11,8 +11,8 @@ import type { Locale } from '../../../i18n/LocaleContext';
 import { useLocale } from '../../../i18n/useLocale';
 import type { GameResultRecord } from '../../../types/record';
 import type { GamePageProps } from '../../loadGameView';
-import { wingspanText } from '../i18n';
-import { WingspanRecordForm } from './RecordForm';
+import { wingspanOceaniaText } from '../i18n';
+import { WingspanOceaniaRecordForm } from './RecordForm';
 
 function formatPlayedDate(date: Date, locale: Locale): string {
   return date.toLocaleDateString(locale, {
@@ -29,7 +29,7 @@ function formatPlayedTime(date: Date, locale: Locale): string {
   });
 }
 
-function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
+function WingspanOceaniaRecordList({ game }: Pick<GamePageProps, 'game'>) {
   const navigate = useNavigate();
   const { locale, t } = useLocale();
   const tRef = useRef(t);
@@ -72,7 +72,7 @@ function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
   async function handleDelete(recordId: string) {
     if (
       !window.confirm(
-        wingspanText(locale, 'deleteConfirm', { game: game.name }),
+        wingspanOceaniaText(locale, 'deleteConfirm', { game: game.name }),
       )
     ) {
       return;
@@ -171,7 +171,7 @@ function WingspanRecordList({ game }: Pick<GamePageProps, 'game'>) {
   );
 }
 
-export default function WingspanGamePage({
+export default function WingspanOceaniaGamePage({
   game,
   mode,
   recordId,
@@ -180,7 +180,7 @@ export default function WingspanGamePage({
 
   if (mode === 'create' || mode === 'edit') {
     return (
-      <WingspanRecordForm
+      <WingspanOceaniaRecordForm
         game={game}
         mode={mode}
         recordId={recordId}
@@ -189,5 +189,5 @@ export default function WingspanGamePage({
     );
   }
 
-  return <WingspanRecordList game={game} />;
+  return <WingspanOceaniaRecordList game={game} />;
 }
