@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { useLocale } from '../../i18n/useLocale';
 
 export interface PlayerOption {
   name: string;
@@ -24,6 +25,7 @@ export function PlayerNameField({
   loadError = null,
   onChange,
 }: PlayerNameFieldProps) {
+  const { t } = useLocale();
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const listboxId = `${inputId}-listbox`;
@@ -120,7 +122,7 @@ export function PlayerNameField({
             setOpen(false);
           }
         }}
-        placeholder="Type name or filter whitelist"
+        placeholder={t('playerName.placeholder')}
         className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
         required={false}
         autoComplete="off"
@@ -136,11 +138,11 @@ export function PlayerNameField({
             <li className="px-3 py-2 text-sm text-red-600">{loadError}</li>
           ) : options.length === 0 ? (
             <li className="px-3 py-2 text-sm text-neutral-400">
-              Whitelist is empty
+              {t('playerName.emptyWhitelist')}
             </li>
           ) : filteredOptions.length === 0 ? (
             <li className="px-3 py-2 text-sm text-neutral-400">
-              No match — you can still type a custom name
+              {t('playerName.noMatch')}
             </li>
           ) : (
             filteredOptions.map((option, index) => (

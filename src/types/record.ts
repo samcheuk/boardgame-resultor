@@ -3,6 +3,8 @@ export interface PlayerScore {
   /** Whitelist email when picked from list; null for custom free-text names */
   email: string | null;
   points: number;
+  /** Optional, game-defined score categories stored with English keys */
+  scoreBreakdown?: Record<string, number>;
 }
 
 export interface GameResultRecord {

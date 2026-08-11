@@ -1,3 +1,4 @@
+import { useLocale } from '../../i18n/useLocale';
 import type { GameConfig } from '../../types/game';
 
 interface SaveStateFormProps {
@@ -5,11 +6,13 @@ interface SaveStateFormProps {
 }
 
 export function SaveStateForm({ game }: SaveStateFormProps) {
+  const { t } = useLocale();
+
   return (
     <section className="rounded-lg border border-neutral-200 p-6">
-      <h2 className="text-lg font-semibold">Save State Form</h2>
+      <h2 className="text-lg font-semibold">{t('saveState.title')}</h2>
       <p className="mt-2 text-sm text-neutral-500">
-        Placeholder form for saving {game.name} campaign status.
+        {t('saveState.placeholder', { gameName: game.name })}
       </p>
     </section>
   );

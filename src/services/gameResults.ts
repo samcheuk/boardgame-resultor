@@ -43,15 +43,33 @@ function mapPlayers(value: unknown): PlayerScore[] {
   }
 
   return value.map((player) => {
-    const row = player as { name?: unknown; email?: unknown; points?: unknown };
+    const row = player as {
+      name?: unknown;
+      email?: unknown;
+      points?: unknown;
+      scoreBreakdown?: unknown;
+    };
     const email =
       typeof row.email === 'string' && row.email.trim().length > 0
         ? row.email.trim()
         : null;
+    const scoreBreakdown =
+      row.scoreBreakdown &&
+      typeof row.scoreBreakdown === 'object' &&
+      !Array.isArray(row.scoreBreakdown)
+        ? Object.fromEntries(
+            Object.entries(row.scoreBreakdown).flatMap(([key, score]) => {
+              const numericScore = Number(score);
+              return Number.isFinite(numericScore) ? [[key, numericScore]] : [];
+            }),
+          )
+        : undefined;
+
     return {
       name: typeof row.name === 'string' ? row.name : '',
       email,
       points: typeof row.points === 'number' ? row.points : Number(row.points) || 0,
+      ...(scoreBreakdown ? { scoreBreakdown } : {}),
     };
   });
 }

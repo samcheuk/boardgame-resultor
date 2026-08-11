@@ -3,20 +3,23 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import { SaveStateForm } from '../components/forms/SaveStateForm';
 import { getGameById } from '../games';
 import { loadGamePage, type GamePageProps } from '../games/loadGameView';
+import { useLocale } from '../i18n/useLocale';
 
 function FallbackGamePage({ game, mode }: GamePageProps) {
+  const { t } = useLocale();
+
   if (game.type === 'result') {
     if (mode !== 'list') {
       return (
         <p className="text-sm text-neutral-500">
-          Record form template is not implemented for this game yet.
+          {t('game.resultFormUnavailable')}
         </p>
       );
     }
 
     return (
       <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-10 text-center text-sm text-neutral-500">
-        No custom result UI for this game yet.
+        {t('game.resultUiUnavailable')}
       </p>
     );
   }
@@ -29,6 +32,7 @@ interface GameViewProps {
 }
 
 export function GameView({ mode }: GameViewProps) {
+  const { t } = useLocale();
   const { gameId, recordId } = useParams<{
     gameId: string;
     recordId?: string;
@@ -85,19 +89,27 @@ export function GameView({ mode }: GameViewProps) {
         </div>
       ) : null}
 
-      <div className="relative mx-auto w-full max-w-4xl px-4 py-8">
+      <div className="relative mx-auto w-full max-w-4xl px-4 pt-20 pb-8">
         <Link
           to="/"
           className="text-sm text-neutral-500 transition hover:text-neutral-800"
         >
-          ← Back to games
+          {t('game.backToGames')}
         </Link>
 
         <header className="mt-6 mb-8">
           <h1 className="text-2xl font-semibold tracking-tight">{game.name}</h1>
           <p className="mt-1 text-sm text-neutral-600">
-            {game.type === 'result' ? 'Result Record' : 'Status Saving'} · BGG #
-            {game.id} · {game.minPlayers}–{game.maxPlayers} players
+            {t(
+              game.type === 'result'
+                ? 'game.type.result'
+                : 'game.type.status',
+            )}{' '}
+            · {t('game.bggId', { id: game.id })} ·{' '}
+            {t('game.playerRange', {
+              min: game.minPlayers,
+              max: game.maxPlayers,
+            })}
             {game.bggUrl ? (
               <>
                 {' · '}
@@ -107,7 +119,7 @@ export function GameView({ mode }: GameViewProps) {
                   rel="noreferrer"
                   className="underline hover:text-neutral-800"
                 >
-                  BoardGameGeek
+                  {t('game.boardGameGeek')}
                 </a>
               </>
             ) : null}
@@ -115,7 +127,7 @@ export function GameView({ mode }: GameViewProps) {
         </header>
 
         {loadingView ? (
-          <p className="text-sm text-neutral-500">Loading game...</p>
+          <p className="text-sm text-neutral-500">{t('game.loading')}</p>
         ) : (
           <Page game={game} mode={mode} recordId={recordId} />
         )}
