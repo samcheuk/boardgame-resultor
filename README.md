@@ -1,4 +1,4 @@
-# Boardgame Tracker
+# Boardgame Resultor
 
 私人用嘅桌遊追蹤 Web App，部署目標係 GitHub Pages（`github.io`）。
 
@@ -72,7 +72,7 @@ npm run dev
 
 因為設定咗 GitHub Pages 的 `base`，本地請開：
 
-`http://localhost:5173/boardgame-tracker/`
+`http://localhost:5173/boardgame-resultor/`
 
 （如果 5173 被佔用，Vite 會改用 5174 等，以 terminal 顯示嘅 URL 為準。）
 
@@ -171,7 +171,7 @@ service cloud.firestore {
 4. Google Cloud OAuth Web client → **Authorized JavaScript origins** 加 `https://samcheuk.github.io`
 5. `git push origin main`，喺 **Actions** 睇 deploy 結果
 
-網址：`https://samcheuk.github.io/boardgame-tracker/`
+網址：`https://samcheuk.github.io/boardgame-resultor/`
 
 ## Adding a Game
 

@@ -6,7 +6,7 @@ import {
 } from './LocaleContext';
 import { translate } from './translate';
 
-const COOKIE_NAME = 'boardgame-tracker-locale';
+const COOKIE_NAME = 'boardgame-resultor-locale';
 const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 
 function readLocaleCookie(): Locale {

@@ -11,7 +11,7 @@ function App() {
   return (
     <LocaleProvider>
       <AuthProvider>
-        <BrowserRouter basename="/boardgame-tracker">
+        <BrowserRouter basename="/boardgame-resultor">
           <LanguageSelector />
           <Routes>
             <Route path="/login" element={<Login />} />

@@ -22,7 +22,7 @@ export function Home() {
       <header className="mb-8 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Boardgame Tracker
+            Boardgame Resultor
           </h1>
           {user?.email ? (
             <p className="mt-1 truncate text-sm text-neutral-500">{user.email}</p>
