@@ -14,5 +14,9 @@ service cloud.firestore {
     match /game_campaigns/{recordId} {
       allow read, create, update, delete: if request.auth != null;
     }
+
+    match /game_incense_money/{recordId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
   }
 }

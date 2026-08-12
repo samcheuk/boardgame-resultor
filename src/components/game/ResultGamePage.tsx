@@ -8,7 +8,10 @@ interface ResultGamePageProps {
   emptyMessage?: string;
   isEmpty?: boolean;
   addLabel?: string;
-  onAdd: () => void;
+  /** When false, omit the default FAB (use a custom add control instead). */
+  showAddButton?: boolean;
+  onAdd?: () => void;
+  headerExtra?: ReactNode;
   children: ReactNode;
 }
 
@@ -22,17 +25,20 @@ export function ResultGamePage({
   emptyMessage,
   isEmpty = false,
   addLabel,
+  showAddButton = true,
   onAdd,
+  headerExtra,
   children,
 }: ResultGamePageProps) {
   const { t } = useLocale();
 
   return (
     <section className="relative pb-24">
-      <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
           {title ?? t('records.title')}
         </h2>
+        {headerExtra}
       </div>
 
       {loading ? (
@@ -49,7 +55,9 @@ export function ResultGamePage({
 
       {!loading && !isEmpty ? children : null}
 
-      <FloatingAddButton onClick={onAdd} label={addLabel} />
+      {showAddButton && onAdd ? (
+        <FloatingAddButton onClick={onAdd} label={addLabel} />
+      ) : null}
     </section>
   );
 }

@@ -92,7 +92,9 @@ export function Home() {
                     </h3>
                     <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
                       {gameTypeLabel(game.type, t)} ·{' '}
-                      {t('game.bggId', { id: game.id })}
+                      {t(game.bggUrl ? 'game.bggId' : 'game.id', {
+                        id: game.id,
+                      })}
                     </p>
                   </div>
                 </Link>

@@ -53,7 +53,7 @@ export const zhTW = {
   'records.deleteFailed': '刪除紀錄失敗。',
   'records.saveFailed': '儲存紀錄失敗。',
   'records.permissionDenied':
-    'Firestore 權限不足。請 Publish rules，允許已登入用戶存取 game_campaigns（以及 game_results）。',
+    'Firestore 權限不足。請 Publish rules，允許已登入用戶存取 game_campaigns、game_results，以及 game_incense_money。',
   'records.formLoadFailed': '載入表格資料失敗。',
   'records.notFound': '找不到紀錄。',
   'records.signInRequired': '你必須登入才能儲存紀錄。',
