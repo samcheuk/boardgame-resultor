@@ -30,7 +30,9 @@ export const en = {
   'game.type.result': 'Result Record',
   'game.backToGames': '← Back to games',
   'game.bggId': 'BGG #{{id}}',
+  'game.id': 'ID {{id}}',
   'game.playerRange': '{{min}}–{{max}} players',
+  'game.playerRangeMinPlus': '{{min}}+ players',
   'game.boardGameGeek': 'BoardGameGeek',
   'game.loading': 'Loading game...',
   'game.resultFormUnavailable':

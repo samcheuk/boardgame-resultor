@@ -107,11 +107,14 @@ export function GameView({ mode }: GameViewProps) {
                 ? 'game.type.result'
                 : 'game.type.status',
             )}{' '}
-            · {t('game.bggId', { id: game.id })} ·{' '}
-            {t('game.playerRange', {
-              min: game.minPlayers,
-              max: game.maxPlayers,
-            })}
+            ·{' '}
+            {t(game.bggUrl ? 'game.bggId' : 'game.id', { id: game.id })} ·{' '}
+            {game.maxPlayers == null
+              ? t('game.playerRangeMinPlus', { min: game.minPlayers })
+              : t('game.playerRange', {
+                  min: game.minPlayers,
+                  max: game.maxPlayers,
+                })}
             {game.bggUrl ? (
               <>
                 {' · '}

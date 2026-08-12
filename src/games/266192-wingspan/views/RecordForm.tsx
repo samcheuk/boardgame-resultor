@@ -148,9 +148,11 @@ export function WingspanRecordForm({
           }
 
           setPlayedAt(toDateTimeLocalValue(record.playedAt));
-          const loadedPlayers = record.players
-            .slice(0, game.maxPlayers)
-            .map(toPlayerInput);
+          const loadedPlayers = (
+            game.maxPlayers == null
+              ? record.players
+              : record.players.slice(0, game.maxPlayers)
+          ).map(toPlayerInput);
           setPlayers(
             loadedPlayers.length > 0 ? loadedPlayers : [createEmptyPlayer()],
           );
@@ -370,7 +372,7 @@ export function WingspanRecordForm({
           ))}
         </div>
 
-        {players.length < game.maxPlayers ? (
+        {game.maxPlayers == null || players.length < game.maxPlayers ? (
           <button
             type="button"
             onClick={() => {

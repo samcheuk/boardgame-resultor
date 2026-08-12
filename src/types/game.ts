@@ -6,7 +6,7 @@ export type GameType = 'status' | 'result';
 export type LocalizedText = Record<Locale, string>;
 
 export interface GameConfig<TMeta = unknown> {
-  /** BoardGameGeek item ID, e.g. "13" for Catan */
+  /** BoardGameGeek item ID, or a custom id when the game is not on BGG (e.g. "SC1") */
   id: string;
   /**
    * Short kebab-case code name, e.g. "catan".
@@ -17,7 +17,8 @@ export interface GameConfig<TMeta = unknown> {
   name: LocalizedText;
   type: GameType;
   minPlayers: number;
-  maxPlayers: number;
+  /** Upper player limit; `null` means no maximum. */
+  maxPlayers: number | null;
   bggUrl?: string;
   /** Optional cover / background image URL (Vite-imported asset) */
   coverImage?: string;

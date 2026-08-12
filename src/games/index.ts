@@ -4,6 +4,7 @@ import { gloomhavenConfig } from './174430-gloomhaven/config';
 import { wingspanConfig } from './266192-wingspan/config';
 import { wingspanOceaniaConfig } from './300580-wingspan-oceania/config';
 import { monsterHunterWorldConfig } from './319971-monster-hunter-world/config';
+import { hkTwMjConfig } from './SC1-hk-tw-mj/config';
 
 export { getGameModuleDir } from './getGameModuleDir';
 export { getGameName } from './getGameName';
@@ -15,6 +16,7 @@ export const games: GameConfig[] = [
   wingspanConfig,
   wingspanOceaniaConfig,
   monsterHunterWorldConfig,
+  hkTwMjConfig,
 ];
 
 export function getGameById(gameId: string): GameConfig | undefined {

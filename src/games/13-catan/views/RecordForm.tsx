@@ -53,7 +53,7 @@ export function CatanRecordForm({
   const { locale, t } = useLocale();
   const tRef = useRef(t);
   tRef.current = t;
-  const playerSlots = game.maxPlayers;
+  const playerSlots = game.maxPlayers ?? game.minPlayers;
   const [playedAt, setPlayedAt] = useState(() => toDateTimeLocalValue(new Date()));
   const [players, setPlayers] = useState<PlayerScore[]>(() =>
     createEmptyPlayers(playerSlots),
@@ -159,12 +159,13 @@ export function CatanRecordForm({
 
     if (
       normalizedPlayers.length < game.minPlayers ||
-      normalizedPlayers.length > game.maxPlayers
+      (game.maxPlayers != null &&
+        normalizedPlayers.length > game.maxPlayers)
     ) {
       setError(
         catanText(locale, 'invalidPlayerCount', {
           min: game.minPlayers,
-          max: game.maxPlayers,
+          max: game.maxPlayers ?? '',
         }),
       );
       return;
@@ -249,7 +250,7 @@ export function CatanRecordForm({
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
             {catanText(locale, 'playerInstructions', {
               min: game.minPlayers,
-              max: game.maxPlayers,
+              max: playerSlots,
             })}
           </p>
 

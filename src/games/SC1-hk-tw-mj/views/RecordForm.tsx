@@ -14,28 +14,16 @@ import { localizeError } from '../../../i18n/errors';
 import { useLocale } from '../../../i18n/useLocale';
 import type { GameConfig } from '../../../types/game';
 import type { PlayerScore } from '../../../types/record';
-import { wingspanOceaniaText } from '../i18n';
+import { formatBalance, hkTwMjText } from '../i18n';
 
-const SCORE_CATEGORIES = [
-  { key: 'birds', translationKey: 'birds' },
-  { key: 'bonusCards', translationKey: 'bonusCards' },
-  { key: 'endOfRoundGoals', translationKey: 'endOfRoundGoals' },
-  { key: 'eggs', translationKey: 'eggs' },
-  { key: 'cachedFood', translationKey: 'cachedFood' },
-  { key: 'tuckedCards', translationKey: 'tuckedCards' },
-  { key: 'nectar', translationKey: 'nectar' },
-] as const;
-
-type ScoreCategoryKey = (typeof SCORE_CATEGORIES)[number]['key'];
-type ScoreInputs = Record<ScoreCategoryKey, string>;
-
-interface WingspanOceaniaPlayerInput {
+interface PlayerInput {
   name: string;
   email: string | null;
-  scores: ScoreInputs;
+  /** Raw input string so empty / "-" / partial values stay editable */
+  balance: string;
 }
 
-interface WingspanOceaniaRecordFormProps {
+interface HkTwMjRecordFormProps {
   game: GameConfig;
   mode: 'create' | 'edit';
   recordId?: string;
@@ -47,52 +35,49 @@ function toDateTimeLocalValue(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-function createEmptyScores(): ScoreInputs {
-  return {
-    birds: '',
-    bonusCards: '',
-    endOfRoundGoals: '',
-    eggs: '',
-    cachedFood: '',
-    tuckedCards: '',
-    nectar: '',
-  };
-}
-
-function createEmptyPlayer(): WingspanOceaniaPlayerInput {
+function createEmptyPlayer(): PlayerInput {
   return {
     name: '',
     email: null,
-    scores: createEmptyScores(),
+    balance: '',
   };
 }
 
-function toPlayerInput(player: PlayerScore): WingspanOceaniaPlayerInput {
-  const scores = createEmptyScores();
-  for (const { key } of SCORE_CATEGORIES) {
-    const value = player.scoreBreakdown?.[key];
-    scores[key] = typeof value === 'number' ? String(value) : '';
-  }
+function createEmptyPlayers(count: number): PlayerInput[] {
+  return Array.from({ length: count }, () => createEmptyPlayer());
+}
+
+function toPlayerInput(player: PlayerScore): PlayerInput {
   return {
     name: player.name,
     email: player.email,
-    scores,
+    balance: String(player.points),
   };
 }
 
-function getTotal(scores: ScoreInputs): number {
-  return SCORE_CATEGORIES.reduce(
-    (total, { key }) => total + (Number(scores[key]) || 0),
-    0,
-  );
+function parseBalance(value: string): number | null {
+  const trimmed = value.trim();
+  if (trimmed === '' || trimmed === '-' || trimmed === '+' || trimmed === '.') {
+    return null;
+  }
+  const parsed = Number(trimmed);
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+  return parsed;
 }
 
-export function WingspanOceaniaRecordForm({
+function isZeroSum(balances: number[]): boolean {
+  const sum = balances.reduce((total, value) => total + value, 0);
+  return Math.abs(sum) < 1e-9;
+}
+
+export function HkTwMjRecordForm({
   game,
   mode,
   recordId,
   userEmail,
-}: WingspanOceaniaRecordFormProps) {
+}: HkTwMjRecordFormProps) {
   const navigate = useNavigate();
   const { locale, t } = useLocale();
   const tRef = useRef(t);
@@ -100,14 +85,23 @@ export function WingspanOceaniaRecordForm({
   const [playedAt, setPlayedAt] = useState(() =>
     toDateTimeLocalValue(new Date()),
   );
-  const [players, setPlayers] = useState<WingspanOceaniaPlayerInput[]>([
-    createEmptyPlayer(),
-  ]);
+  const [players, setPlayers] = useState<PlayerInput[]>(() =>
+    createEmptyPlayers(game.minPlayers),
+  );
   const [whitelistOptions, setWhitelistOptions] = useState<PlayerOption[]>([]);
   const [whitelistError, setWhitelistError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const parsedBalances = players.map((player) => parseBalance(player.balance));
+  const allBalancesParsed = parsedBalances.every(
+    (value): value is number => value != null,
+  );
+  const balanceSum = allBalancesParsed
+    ? parsedBalances.reduce((total, value) => total + value, 0)
+    : null;
+  const zeroSumOk = balanceSum != null && isZeroSum(parsedBalances as number[]);
 
   useEffect(() => {
     let cancelled = false;
@@ -154,7 +148,12 @@ export function WingspanOceaniaRecordForm({
               : record.players.slice(0, game.maxPlayers)
           ).map(toPlayerInput);
           setPlayers(
-            loadedPlayers.length > 0 ? loadedPlayers : [createEmptyPlayer()],
+            loadedPlayers.length >= game.minPlayers
+              ? loadedPlayers
+              : [
+                  ...loadedPlayers,
+                  ...createEmptyPlayers(game.minPlayers - loadedPlayers.length),
+                ],
           );
         }
       } catch (err) {
@@ -174,11 +173,11 @@ export function WingspanOceaniaRecordForm({
     return () => {
       cancelled = true;
     };
-  }, [mode, recordId, game.id, game.maxPlayers]);
+  }, [mode, recordId, game.id, game.maxPlayers, game.minPlayers]);
 
   function updatePlayer(
     index: number,
-    update: (player: WingspanOceaniaPlayerInput) => WingspanOceaniaPlayerInput,
+    update: (player: PlayerInput) => PlayerInput,
   ) {
     setPlayers((current) =>
       current.map((player, playerIndex) =>
@@ -202,33 +201,41 @@ export function WingspanOceaniaRecordForm({
       return;
     }
 
-    if (players.some((player) => player.name.trim().length === 0)) {
-      setError(wingspanOceaniaText(locale, 'missingPlayerName'));
-      return;
-    }
-
-    const hasInvalidScore = players.some((player) =>
-      SCORE_CATEGORIES.some(({ key }) => {
-        const value = player.scores[key];
-        return value !== '' && (!Number.isFinite(Number(value)) || Number(value) < 0);
-      }),
-    );
-    if (hasInvalidScore) {
-      setError(wingspanOceaniaText(locale, 'invalidScores'));
-      return;
-    }
-
-    const normalizedPlayers: PlayerScore[] = players.map((player) => {
-      const scoreBreakdown = Object.fromEntries(
-        SCORE_CATEGORIES.map(({ key }) => [key, Number(player.scores[key]) || 0]),
+    if (players.length < game.minPlayers) {
+      setError(
+        hkTwMjText(locale, 'invalidPlayerCount', { min: game.minPlayers }),
       );
-      return {
-        name: player.name.trim(),
-        email: player.email,
-        points: getTotal(player.scores),
-        scoreBreakdown,
-      };
-    });
+      return;
+    }
+
+    if (players.some((player) => player.name.trim().length === 0)) {
+      setError(hkTwMjText(locale, 'missingPlayerName'));
+      return;
+    }
+
+    const balances = players.map((player) => parseBalance(player.balance));
+    if (balances.some((value) => value == null)) {
+      setError(hkTwMjText(locale, 'invalidBalances'));
+      return;
+    }
+
+    const numericBalances = balances as number[];
+    if (!isZeroSum(numericBalances)) {
+      const sum = numericBalances.reduce((total, value) => total + value, 0);
+      setError(
+        hkTwMjText(locale, 'zeroSumRequired', {
+          sum: formatBalance(sum),
+        }),
+      );
+      return;
+    }
+
+    const normalizedPlayers: PlayerScore[] = players.map((player, index) => ({
+      name: player.name.trim(),
+      email: player.email,
+      points: numericBalances[index],
+      scoreBreakdown: { balance: numericBalances[index] },
+    }));
 
     setSaving(true);
     try {
@@ -262,7 +269,7 @@ export function WingspanOceaniaRecordForm({
   }
 
   return (
-    <section className="max-w-2xl">
+    <section className="max-w-xl">
       <div className="mb-6 flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">
           {mode === 'edit'
@@ -293,39 +300,61 @@ export function WingspanOceaniaRecordForm({
           />
         </label>
 
-        <div className="space-y-4">
-          {players.map((player, playerIndex) => (
-            <fieldset
-              key={playerIndex}
-              className="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900"
+        <div className="space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                {hkTwMjText(locale, 'playersAndBalances')}
+              </h3>
+              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                {hkTwMjText(locale, 'playerInstructions', {
+                  min: game.minPlayers,
+                })}
+              </p>
+            </div>
+            <p
+              className={`shrink-0 text-xs font-medium ${
+                zeroSumOk
+                  ? 'text-emerald-700 dark:text-emerald-400'
+                  : 'text-neutral-500 dark:text-neutral-400'
+              }`}
             >
-              <div className="mb-4 flex items-center justify-between">
-                <legend className="font-medium text-neutral-900 dark:text-neutral-50">
-                  {wingspanOceaniaText(locale, 'player', {
-                    number: playerIndex + 1,
-                  })}
-                </legend>
-                {players.length > game.minPlayers ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPlayers((current) =>
-                        current.filter((_, index) => index !== playerIndex),
-                      );
-                    }}
-                    className="text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                  >
-                    {t('common.remove')}
-                  </button>
-                ) : null}
-              </div>
+              {balanceSum == null
+                ? hkTwMjText(locale, 'balanceSum', { sum: '—' })
+                : zeroSumOk
+                  ? hkTwMjText(locale, 'balanceSumOk')
+                  : hkTwMjText(locale, 'balanceSum', {
+                      sum: formatBalance(balanceSum),
+                    })}
+            </p>
+          </div>
 
-              <div className="mb-4 space-y-1.5">
-                <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                  {wingspanOceaniaText(locale, 'playerName')}
-                </span>
+          {players.map((player, playerIndex) => (
+            <div
+              key={playerIndex}
+              className="flex items-end gap-2 rounded-lg border border-neutral-200 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-900"
+            >
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {hkTwMjText(locale, 'player', { number: playerIndex + 1 })}
+                  </span>
+                  {players.length > game.minPlayers ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPlayers((current) =>
+                          current.filter((_, index) => index !== playerIndex),
+                        );
+                      }}
+                      className="text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                    >
+                      {t('common.remove')}
+                    </button>
+                  ) : null}
+                </div>
                 <PlayerNameField
-                  id={`wingspan-oceania-player-${playerIndex}`}
+                  id={`hk-tw-mj-player-${playerIndex}`}
                   value={player.name}
                   options={whitelistOptions}
                   loadError={whitelistError}
@@ -338,37 +367,27 @@ export function WingspanOceaniaRecordForm({
                   }}
                 />
               </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                {SCORE_CATEGORIES.map(({ key, translationKey }) => (
-                  <label key={key} className="space-y-1.5">
-                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                      {wingspanOceaniaText(locale, translationKey)}
-                    </span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={player.scores[key]}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        updatePlayer(playerIndex, (current) => ({
-                          ...current,
-                          scores: { ...current.scores, [key]: value },
-                        }));
-                      }}
-                      className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 dark:border-neutral-600 dark:bg-neutral-950 dark:text-neutral-100"
-                      placeholder="0"
-                    />
-                  </label>
-                ))}
-              </div>
-
-              <p className="mt-4 border-t border-neutral-100 pt-3 text-right text-sm font-semibold dark:border-neutral-800">
-                {wingspanOceaniaText(locale, 'total', {
-                  points: getTotal(player.scores),
-                })}
-              </p>
-            </fieldset>
+              <label className="w-28 space-y-1.5">
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {hkTwMjText(locale, 'balance')}
+                </span>
+                <input
+                  type="number"
+                  step="any"
+                  value={player.balance}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    updatePlayer(playerIndex, (current) => ({
+                      ...current,
+                      balance: value,
+                    }));
+                  }}
+                  className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 dark:border-neutral-600 dark:bg-neutral-950 dark:text-neutral-100"
+                  placeholder="0"
+                  required
+                />
+              </label>
+            </div>
           ))}
         </div>
 
@@ -380,7 +399,7 @@ export function WingspanOceaniaRecordForm({
             }}
             className="rounded-md border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50 dark:border-neutral-600 dark:hover:bg-neutral-800"
           >
-            {wingspanOceaniaText(locale, 'addPlayer')}
+            {hkTwMjText(locale, 'addPlayer')}
           </button>
         ) : null}
 

@@ -665,7 +665,7 @@ export function MonsterHunterWorldRecordForm({
           ))}
         </div>
 
-        {players.length < game.maxPlayers ? (
+        {game.maxPlayers == null || players.length < game.maxPlayers ? (
           <button
             type="button"
             onClick={() => {
