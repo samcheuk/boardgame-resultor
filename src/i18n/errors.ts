@@ -18,6 +18,22 @@ export function localizeError(
   fallbackKey: TranslationKey,
 ): string {
   const message = error instanceof Error ? error.message : String(error ?? '');
+  const code =
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    typeof (error as { code: unknown }).code === 'string'
+      ? (error as { code: string }).code
+      : '';
+
+  if (
+    code === 'permission-denied' ||
+    message.toLowerCase().includes('insufficient permissions') ||
+    message.toLowerCase().includes('permission-denied')
+  ) {
+    return t('records.permissionDenied');
+  }
+
   const knownKey = knownErrors[message.replace(/\.$/, '')] ?? knownErrors[message];
   if (knownKey) {
     return t(knownKey);

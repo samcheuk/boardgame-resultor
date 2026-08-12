@@ -50,6 +50,8 @@ export const en = {
   'records.loadFailed': 'Failed to load records.',
   'records.deleteFailed': 'Failed to delete record.',
   'records.saveFailed': 'Failed to save record.',
+  'records.permissionDenied':
+    'Missing Firestore permission. Publish rules that allow authenticated access to game_campaigns (and game_results).',
   'records.formLoadFailed': 'Failed to load form data.',
   'records.notFound': 'Record not found.',
   'records.signInRequired': 'You must be signed in to save a record.',

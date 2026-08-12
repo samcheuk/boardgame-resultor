@@ -133,6 +133,10 @@ service cloud.firestore {
     match /game_results/{recordId} {
       allow read, create, update, delete: if request.auth != null;
     }
+
+    match /game_campaigns/{recordId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
   }
 }
 ```
@@ -145,7 +149,8 @@ service cloud.firestore {
 
 - 已登入用戶可以讀整個 `whitelist`（用嚟揀 player name）
 - 禁止前端寫入；whitelist 只喺 Console 管理
-- 若見到 `Missing or insufficient permissions`，多數係 rules 未 publish 或 document ID 同 Google email 唔一致
+- `game_results` 用嚟存 result 遊戲紀錄；`game_campaigns` 用嚟存 status／campaign（例如 Monster Hunter World）
+- 若見到 `Missing or insufficient permissions`，多數係 rules 未 publish、未加 `game_campaigns`，或 document ID 同 Google email 唔一致
 
 ### 5. Auth 流程（app 行為）
 
