@@ -27,6 +27,8 @@ export const zhTW = {
   'home.games': '遊戲',
   'home.searchPlaceholder': '搜尋遊戲...',
   'home.noSearchResults': '沒有符合的遊戲。',
+  'home.pin': '釘選至頂部',
+  'home.unpin': '取消釘選',
   'game.type.status': '進度儲存',
   'game.type.result': '賽果紀錄',
   'game.backToGames': '← 返回遊戲列表',

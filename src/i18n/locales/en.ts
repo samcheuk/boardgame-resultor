@@ -26,6 +26,8 @@ export const en = {
   'home.games': 'Games',
   'home.searchPlaceholder': 'Search games...',
   'home.noSearchResults': 'No games match your search.',
+  'home.pin': 'Pin to top',
+  'home.unpin': 'Unpin',
   'game.type.status': 'Status Saving',
   'game.type.result': 'Result Record',
   'game.backToGames': '← Back to games',
