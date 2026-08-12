@@ -18,11 +18,16 @@ import type { GameResultRecord } from '../../../types/record';
 import { getGameName } from '../../getGameName';
 import type { GamePageProps } from '../../loadGameView';
 import { formatBalance, hkTwMjText } from '../i18n';
+import { buildLeaderboardTables } from '../leaderboard';
+import type {
+  IncenseLeaderboardEntry,
+  ResultLeaderboardEntry,
+} from '../leaderboard';
 import { FloatingAddMenu } from './FloatingAddMenu';
 import { IncenseMoneyForm } from './IncenseMoneyForm';
 import { HkTwMjRecordForm } from './RecordForm';
 
-type ListTab = 'results' | 'incense';
+type ListTab = 'results' | 'incense' | 'leaderboard';
 
 function formatPlayedDate(date: Date, locale: Locale): string {
   return date.toLocaleDateString(locale, {
@@ -40,7 +45,10 @@ function formatPlayedTime(date: Date, locale: Locale): string {
 }
 
 function parseListTab(value: string | null): ListTab {
-  return value === 'incense' ? 'incense' : 'results';
+  if (value === 'incense' || value === 'leaderboard') {
+    return value;
+  }
+  return 'results';
 }
 
 function TabSegment({
@@ -54,13 +62,14 @@ function TabSegment({
   const options: Array<{ id: ListTab; label: string }> = [
     { id: 'results', label: hkTwMjText(locale, 'tabResults') },
     { id: 'incense', label: hkTwMjText(locale, 'tabIncense') },
+    { id: 'leaderboard', label: hkTwMjText(locale, 'tabLeaderboard') },
   ];
 
   return (
     <div
       role="tablist"
       aria-label={hkTwMjText(locale, 'tabsLabel')}
-      className="inline-flex min-h-9 items-stretch rounded-lg border border-neutral-300 bg-white/95 p-0.5 dark:border-neutral-600 dark:bg-neutral-900/95"
+      className="inline-flex min-h-9 max-w-full items-stretch overflow-x-auto rounded-lg border border-neutral-300 bg-white/95 p-0.5 dark:border-neutral-600 dark:bg-neutral-900/95"
     >
       {options.map((option) => {
         const selected = value === option.id;
@@ -73,7 +82,7 @@ function TabSegment({
             onClick={() => {
               onChange(option.id);
             }}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+            className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition ${
               selected
                 ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
                 : 'text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100'
@@ -83,6 +92,125 @@ function TabSegment({
           </button>
         );
       })}
+    </div>
+  );
+}
+
+function signedClass(value: number): string {
+  if (value > 0) {
+    return 'text-emerald-700 dark:text-emerald-400';
+  }
+  if (value < 0) {
+    return 'text-red-700 dark:text-red-400';
+  }
+  return 'text-neutral-900 dark:text-neutral-50';
+}
+
+function ResultStandings({ entries }: { entries: ResultLeaderboardEntry[] }) {
+  const { locale, t } = useLocale();
+
+  if (entries.length === 0) {
+    return (
+      <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-8 text-center text-sm text-neutral-500 dark:border-neutral-600 dark:text-neutral-400">
+        {hkTwMjText(locale, 'leaderboardResultsEmpty')}
+      </p>
+    );
+  }
+
+  return (
+    <ul className="space-y-2">
+      {entries.map((entry, index) => (
+        <li
+          key={entry.key}
+          className="flex items-baseline justify-between gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900"
+        >
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-50">
+              <span className="mr-2 text-neutral-400 dark:text-neutral-500">
+                {t('common.rank', { rank: index + 1 })}
+              </span>
+              {entry.name}
+            </p>
+            <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+              {hkTwMjText(locale, 'leaderboardResultMeta', {
+                games: entry.games,
+              })}
+            </p>
+          </div>
+          <p
+            className={`shrink-0 text-sm font-semibold tabular-nums ${signedClass(entry.total)}`}
+          >
+            {formatBalance(entry.total)}
+          </p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function IncenseStandings({ entries }: { entries: IncenseLeaderboardEntry[] }) {
+  const { locale, t } = useLocale();
+
+  if (entries.length === 0) {
+    return (
+      <p className="rounded-lg border border-dashed border-neutral-300 px-4 py-8 text-center text-sm text-neutral-500 dark:border-neutral-600 dark:text-neutral-400">
+        {hkTwMjText(locale, 'leaderboardIncenseEmpty')}
+      </p>
+    );
+  }
+
+  return (
+    <ul className="space-y-2">
+      {entries.map((entry, index) => (
+        <li
+          key={entry.key}
+          className="flex items-baseline justify-between gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900"
+        >
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-50">
+              <span className="mr-2 text-neutral-400 dark:text-neutral-500">
+                {t('common.rank', { rank: index + 1 })}
+              </span>
+              {entry.name}
+            </p>
+            <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+              {hkTwMjText(locale, 'leaderboardIncenseMeta', {
+                count: entry.count,
+              })}
+            </p>
+          </div>
+          <p className="shrink-0 text-sm font-semibold tabular-nums text-neutral-900 dark:text-neutral-50">
+            {entry.total}
+          </p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function LeaderboardList({
+  results,
+  incense,
+}: {
+  results: ResultLeaderboardEntry[];
+  incense: IncenseLeaderboardEntry[];
+}) {
+  const { locale } = useLocale();
+
+  return (
+    <div className="space-y-8">
+      <section className="space-y-3">
+        <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+          {hkTwMjText(locale, 'leaderboardResultsTitle')}
+        </h3>
+        <ResultStandings entries={results} />
+      </section>
+      <section className="space-y-3">
+        <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+          {hkTwMjText(locale, 'leaderboardIncenseTitle')}
+        </h3>
+        <IncenseStandings entries={incense} />
+      </section>
     </div>
   );
 }
@@ -293,10 +421,11 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
   }, [game.id]);
 
   function setTab(next: ListTab) {
-    setSearchParams(
-      next === 'incense' ? { tab: 'incense' } : {},
-      { replace: true },
-    );
+    if (next === 'results') {
+      setSearchParams({}, { replace: true });
+      return;
+    }
+    setSearchParams({ tab: next }, { replace: true });
   }
 
   async function handleDeleteResult(recordId: string) {
@@ -343,8 +472,20 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
     }
   }
 
-  const isResults = tab === 'results';
-  const activeRecords = isResults ? resultRecords : incenseRecords;
+  const leaderboard = buildLeaderboardTables(resultRecords, incenseRecords);
+  const pageTitle =
+    tab === 'results'
+      ? hkTwMjText(locale, 'tabResults')
+      : tab === 'incense'
+        ? hkTwMjText(locale, 'tabIncense')
+        : hkTwMjText(locale, 'tabLeaderboard');
+  const isEmpty =
+    !loading &&
+    (tab === 'leaderboard'
+      ? leaderboard.results.length === 0 && leaderboard.incense.length === 0
+      : tab === 'results'
+        ? resultRecords.length === 0
+        : incenseRecords.length === 0);
 
   return (
     <>
@@ -355,15 +496,15 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
       ) : null}
 
       <ResultGamePage
-        title={
-          isResults
-            ? hkTwMjText(locale, 'tabResults')
-            : hkTwMjText(locale, 'tabIncense')
-        }
+        title={pageTitle}
         loading={loading}
-        isEmpty={!loading && activeRecords.length === 0}
+        isEmpty={isEmpty}
         emptyMessage={
-          isResults ? undefined : hkTwMjText(locale, 'incenseEmpty')
+          tab === 'incense'
+            ? hkTwMjText(locale, 'incenseEmpty')
+            : tab === 'leaderboard'
+              ? hkTwMjText(locale, 'leaderboardEmpty')
+              : undefined
         }
         showAddButton={false}
         headerExtra={
@@ -375,7 +516,7 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
           />
         }
       >
-        {isResults ? (
+        {tab === 'results' ? (
           <ResultsList
             game={game}
             records={resultRecords}
@@ -384,7 +525,8 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
               void handleDeleteResult(recordId);
             }}
           />
-        ) : (
+        ) : null}
+        {tab === 'incense' ? (
           <IncenseList
             game={game}
             records={incenseRecords}
@@ -393,7 +535,13 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
               void handleDeleteIncense(recordId);
             }}
           />
-        )}
+        ) : null}
+        {tab === 'leaderboard' ? (
+          <LeaderboardList
+            results={leaderboard.results}
+            incense={leaderboard.incense}
+          />
+        ) : null}
       </ResultGamePage>
 
       <FloatingAddMenu
