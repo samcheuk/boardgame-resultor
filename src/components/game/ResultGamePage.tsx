@@ -7,6 +7,7 @@ interface ResultGamePageProps {
   loading?: boolean;
   emptyMessage?: string;
   isEmpty?: boolean;
+  addLabel?: string;
   onAdd: () => void;
   children: ReactNode;
 }
@@ -20,6 +21,7 @@ export function ResultGamePage({
   loading = false,
   emptyMessage,
   isEmpty = false,
+  addLabel,
   onAdd,
   children,
 }: ResultGamePageProps) {
@@ -47,7 +49,7 @@ export function ResultGamePage({
 
       {!loading && !isEmpty ? children : null}
 
-      <FloatingAddButton onClick={onAdd} />
+      <FloatingAddButton onClick={onAdd} label={addLabel} />
     </section>
   );
 }

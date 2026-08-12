@@ -10,5 +10,9 @@ service cloud.firestore {
     match /game_results/{recordId} {
       allow read, create, update, delete: if request.auth != null;
     }
+
+    match /game_campaigns/{recordId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
   }
 }
