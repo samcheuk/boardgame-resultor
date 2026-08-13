@@ -1,0 +1,418 @@
+export interface FanTableRow {
+  id: string;
+  name: string;
+  /** Fan value or payment amount text (e.g. "1", "一個底") */
+  fan: string;
+  description: string;
+}
+
+/** HK-style Taiwanese Mahjong fan chart (baseline from twmahjong.com). Edit freely. */
+export const FAN_TABLE_ROWS: FanTableRow[] = [
+  { id: 'no-flower', name: '無花', fan: '1', description: '沒有花牌' },
+  { id: 'correct-flower', name: '正花', fan: '2', description: '花牌數字同坐位相同' },
+  { id: 'wrong-flower', name: '爛花', fan: '1', description: '花牌數字同坐位不同' },
+  {
+    id: 'pong-wind-correct',
+    name: '碰出東、南、西或北(正風)',
+    fan: '2',
+    description: '正風牌刻子',
+  },
+  {
+    id: 'pong-wind-other',
+    name: '碰出東、南、西或北(不是正風)',
+    fan: '1',
+    description: '非正風牌刻子',
+  },
+  {
+    id: 'pong-dragon',
+    name: '碰出中、發或白',
+    fan: '2',
+    description: '中、發或白刻子',
+  },
+  {
+    id: 'ting',
+    name: '聽牌 (叮)',
+    fan: '5',
+    description: '聲明已經叫胡，不得轉章，不得暗槓，可以睇其他家的牌',
+  },
+  {
+    id: 'men-qing-ting',
+    name: '門清聽牌 (叮)',
+    fan: '10',
+    description: '門前清清況下聽牌',
+  },
+  {
+    id: 'chicken',
+    name: '雞胡',
+    fan: '10',
+    description: '胡出時(不計莊前)只得一番',
+  },
+  { id: 'dui-pong', name: '對碰', fan: '2', description: '叫胡叫對碰' },
+  {
+    id: 'fake-single',
+    name: '假獨',
+    fan: '1',
+    description: '可以砌到叫單釣或叫偏章',
+  },
+  { id: 'true-single', name: '獨獨', fan: '2', description: '單釣或叫偏章' },
+  { id: 'ping-hu', name: '平胡', fan: '3', description: '沒有刻子, 全部順子' },
+  { id: 'jiang-eye', name: '將眼', fan: '1', description: '以一對二、五或八做眼' },
+  {
+    id: 'lao-shao',
+    name: '老少',
+    fan: '3',
+    description: '同門一,二,三加七,八,九 或 一,一,一加九,九,九 (有同門牌亦可)',
+  },
+  { id: 'no-honor', name: '無字', fan: '1', description: '沒有番子' },
+  { id: 'no-honor-flower', name: '無字花', fan: '5', description: '沒有番子及沒有花' },
+  {
+    id: 'big-ping-hu',
+    name: '無字花平胡(大平糊)',
+    fan: '15',
+    description: '沒有番子，沒有花，又是平胡',
+  },
+  { id: 'men-qing', name: '門清', fan: '5', description: '門前清, 暗槓亦可' },
+  { id: 'haidi', name: '海底撈月', fan: '20', description: '最後一隻牌自摸' },
+  { id: 'self-draw', name: '自摸', fan: '1', description: '自己摸食出' },
+  {
+    id: 'self-draw-joker',
+    name: '自摸百搭',
+    fan: '5',
+    description: '自己摸百搭食出',
+  },
+  {
+    id: 'ming-kong',
+    name: '明摃',
+    fan: '1',
+    description: '自己摸到三張相同牌，碰出第四張',
+  },
+  { id: 'an-kong', name: '暗摃', fan: '5', description: '自己摸到四張相同牌' },
+  { id: 'flower-hu', name: '花上食胡', fan: '1', description: '摸花時自摸' },
+  { id: 'kong-hu', name: '摃上食胡', fan: '1', description: '開摃時自摸' },
+  {
+    id: 'rob-kong',
+    name: '搶摃食胡',
+    fan: '1',
+    description: '搶摃不當自摸，搶摃只當是被搶那家出沖，不過加一番',
+  },
+  {
+    id: 'kong-kong-hu',
+    name: '摃上摃食胡',
+    fan: '30',
+    description: '開槓後再開槓時自摸',
+  },
+  {
+    id: 'rob-kong-kong',
+    name: '搶摃上摃食胡',
+    fan: '30',
+    description: '也是不當自摸，當摃上摃的那家出沖',
+  },
+  {
+    id: 'two-concealed',
+    name: '二暗刻',
+    fan: '5',
+    description:
+      '刻子就是三隻一樣的牌。明摃、暗摃或在自己手上三隻一樣的牌叫做暗刻',
+  },
+  { id: 'three-concealed', name: '三暗刻', fan: '10', description: '三個刻子在自己手裡' },
+  { id: 'four-concealed', name: '四暗刻', fan: '30', description: '四個刻子在自己手裡' },
+  { id: 'yi-ban-gao', name: '一般高', fan: '5', description: '兩個一樣的順子' },
+  { id: 'san-ban-gao', name: '三般高', fan: '15', description: '三個一樣的順子' },
+  { id: 'si-ban-gao', name: '四般高', fan: '30', description: '四個一樣的順子' },
+  {
+    id: 'two-same-chow',
+    name: '二相逢(順子)',
+    fan: '3',
+    description: '二個款式不同的但數字一樣順子',
+  },
+  {
+    id: 'three-same-chow',
+    name: '三相逢(順子)',
+    fan: '10',
+    description: '三個款式不同的但數字一樣順子',
+  },
+  {
+    id: 'four-same-chow',
+    name: '四同順',
+    fan: '20',
+    description: '四個數字一樣順子，不論款式，不再計三相逢/一般高/兩般高/三般高',
+  },
+  {
+    id: 'five-same-chow',
+    name: '五同順',
+    fan: '40',
+    description: '五個數字一樣順子，不論款式，不再計三相逢/一般高/兩般高/三般高',
+  },
+  { id: 'two-brothers', name: '二兄弟(刻子)', fan: '5', description: '兩款數字一樣的刻子' },
+  {
+    id: 'small-three-brothers',
+    name: '小三兄弟(刻子)',
+    fan: '10',
+    description: '二兄弟再加上另一個兄弟做眼',
+  },
+  {
+    id: 'big-three-brothers',
+    name: '大三兄弟(刻子)',
+    fan: '15',
+    description: '三款數字一樣的刻子',
+  },
+  {
+    id: 'small-three-sisters',
+    name: '小三姊妹',
+    fan: '5',
+    description: '兩副同款而數子相連樣的刻子，另加一對數子相連的眼',
+  },
+  {
+    id: 'big-three-sisters',
+    name: '大三姊妹',
+    fan: '15',
+    description: '三副同款而數子相連樣的刻子',
+  },
+  { id: 'four-in-one', name: '四歸一', fan: '5', description: '用盡同一隻牌的四隻牌' },
+  {
+    id: 'four-in-two',
+    name: '四歸二',
+    fan: '10',
+    description: '用盡同一隻牌的四隻牌, 兩隻做眼',
+  },
+  {
+    id: 'four-in-four',
+    name: '四歸四',
+    fan: '20',
+    description: '用盡同一隻牌的四隻牌（順子）',
+  },
+  {
+    id: 'ming-long',
+    name: '明龍',
+    fan: '15',
+    description: '同一個款式，只有一至九，其中有些是上回來的',
+  },
+  {
+    id: 'an-long',
+    name: '暗龍',
+    fan: '20',
+    description: '同一個款式，只有一至九，全部是是手裡的，食胡那隻可以是其他家打出',
+  },
+  {
+    id: 'ming-za-long',
+    name: '明雜龍',
+    fan: '10',
+    description: '同一個款式，只有一至九，其中有些是上回來的',
+  },
+  {
+    id: 'an-za-long',
+    name: '暗雜龍',
+    fan: '15',
+    description: '同一個款式，只有一至九，全部是是手裡的，食胡那隻可以是其他家打出',
+  },
+  {
+    id: 'five-suits',
+    name: '五門齊',
+    fan: '10',
+    description: '東南西北為一門，中發白為一門，筒索萬各三門。全副牌五門都有齊',
+  },
+  {
+    id: 'seven-suits',
+    name: '七門齊',
+    fan: '15',
+    description: '東南西北為一門，中發白為一門，筒索萬各三門，草花各兩門。全副牌七門都有齊',
+  },
+  {
+    id: 'missing-one',
+    name: '缺一門',
+    fan: '5',
+    description: '不計番子而缺少筒、索或萬一門',
+  },
+  { id: 'half-flush', name: '混一色', fan: '30', description: '只有一門牌及番子' },
+  { id: 'full-flush', name: '清一色', fan: '80', description: '只有一門牌及沒有番子' },
+  { id: 'all-pongs', name: '對對胡', fan: '30', description: '全副牌是刻子' },
+  {
+    id: 'full-external',
+    name: '全求人',
+    fan: '15',
+    description: '全副牌落地，單釣而其他家打出胡牌(明槓亦可，暗槓不可)',
+  },
+  {
+    id: 'half-external',
+    name: '半求人',
+    fan: '8',
+    description: '全副牌落地，單釣而自摸(明槓亦可，暗槓不可)',
+  },
+  {
+    id: 'within-four',
+    name: '四只內',
+    fan: '40',
+    description: '拿走食胡牌後，地下只有四隻牌內食胡(算至第四隻)，不計上及碰了的牌',
+  },
+  {
+    id: 'within-seven',
+    name: '七只內',
+    fan: '20',
+    description: '拿走食胡牌後，地下只有七隻牌內食胡(算至第七隻)，不計上及碰了的牌',
+  },
+  {
+    id: 'within-ten',
+    name: '十只內',
+    fan: '10',
+    description: '拿走食胡牌後，地下只有十隻牌內食胡(算至第十隻)，不計上及碰了的牌',
+  },
+  {
+    id: 'small-three-dragons',
+    name: '小三元',
+    fan: '20',
+    description: '中、發、白其中兩組刻子及一對子',
+  },
+  {
+    id: 'big-three-dragons',
+    name: '大三元',
+    fan: '40',
+    description: '中、發、白三組刻子',
+  },
+  {
+    id: 'small-three-winds',
+    name: '小三風',
+    fan: '15',
+    description: '有東、南、西、北其中兩組刻子及一對做眼',
+  },
+  {
+    id: 'big-three-winds',
+    name: '大三風',
+    fan: '30',
+    description: '有東、南、西、北其中三組刻子',
+  },
+  {
+    id: 'small-four-winds',
+    name: '小四喜',
+    fan: '60',
+    description: '有東、南、西、北其中三組刻子及一對做眼',
+  },
+  {
+    id: 'big-four-winds',
+    name: '大四喜',
+    fan: '80',
+    description: '有東、南、西、北四組刻子',
+  },
+  {
+    id: 'thirteen-orphans',
+    name: '十三么',
+    fan: '100',
+    description: '十三么，另三隻是自己摸回來的順子或暗刻，不能上或碰回來',
+  },
+  {
+    id: 'sixteen-not-match',
+    name: '十六不搭 (九唔搭八)',
+    fan: '40',
+    description:
+      '東南西北中發白，其他三門每樣三隻，但不能搭上，例如一、四、九或二、五、九，再加一對眼',
+  },
+  {
+    id: 'sixteen-not-match-three-same-chow',
+    name: '十六不搭三相逢',
+    fan: '60',
+    description:
+      '東南西北中發白，其他三門每樣三隻，但不能搭上，例如一、四、九或二、五、九，而且三相逢，再加一對眼',
+  },
+  {
+    id: 'real-sixteen-not-match',
+    name: '正宗十六不搭',
+    fan: '80',
+    description:
+      '東南西北中發白，其他三門每樣三隻，但不能搭上，例如一、四、九或二、五、九，而且是雜龍，再加一對眼',
+  },
+  { id: 'five-concealed', name: '五暗刻', fan: '80', description: '五個刻子在自己手裡' },
+  {
+    id: 'jian-jian-hu',
+    name: '間間胡',
+    fan: '100',
+    description: '自摸門前對對糊',
+  },
+  {
+    id: 'qi-dui',
+    name: '嚦咕嚦咕',
+    fan: '40',
+    description: '八對子，三隻一樣的不能碰出',
+  },
+  {
+    id: 'two-set-flower',
+    name: '兩台花 (花胡)',
+    fan: '30',
+    description: '二台花可以立刻食胡, 不須要計手上的牌',
+  },
+  { id: 'no-terminals', name: '斷么', fan: '5', description: '全副牌沒有么九及番子' },
+  {
+    id: 'all-with-mixed-terminals',
+    name: '全帶混么',
+    fan: '10',
+    description: '全副牌每一組合都有么九或番子',
+  },
+  {
+    id: 'all-with-terminals',
+    name: '全帶么',
+    fan: '15',
+    description: '全副牌每一組合都有么九, 無番子',
+  },
+  { id: 'mixed-terminals', name: '混么', fan: '30', description: '全副牌都是么九及番子' },
+  { id: 'pure-terminals', name: '清么', fan: '80', description: '全副牌都是么九' },
+  {
+    id: 'heavenly',
+    name: '天胡',
+    fan: '100',
+    description: '莊家一開牌補花後即吃糊 (開牌開槓後吃糊唔計天糊)',
+  },
+  { id: 'earthly', name: '地胡', fan: '80', description: '閒家第一次摸牌即自摸' },
+  {
+    id: 'human',
+    name: '人胡',
+    fan: '80',
+    description: '不是莊家獨有的牌類，閒家在四隻牌內吃糊',
+  },
+];
+
+/** Immediate payment items (即時付錢). Edit freely. */
+export const IMMEDIATE_PAYMENT_ROWS: FanTableRow[] = [
+  {
+    id: 'chase',
+    name: '追',
+    fan: '半底 x 3',
+    description: '三家打同一隻牌，第四家打唔到就要俾其他三家每人半個底',
+  },
+  {
+    id: 'chase-end',
+    name: '追到底',
+    fan: '一個底',
+    description: '四家打同一隻牌，第一家俾其他三家每人一個底',
+  },
+  {
+    id: 'concealed-kong-pay',
+    name: '暗摃',
+    fan: '一個底 x 3',
+    description: '暗摃在完結時須打開讓其他家知道，否則訓二個底',
+  },
+  {
+    id: 'one-set',
+    name: '一台',
+    fan: '一個底 x 3',
+    description: '拿到一台時(草或花)，其他三家每人俾一個底',
+  },
+  {
+    id: 'one-set-flower-grass',
+    name: '一台花/草',
+    fan: '一個底 x 3',
+    description: '拿到一台草或一台花時，其他三家每人俾一個底',
+  },
+  {
+    id: 'dice-123',
+    name: '一二三',
+    fan: '俾一個底 x 3',
+    description: '做莊擲骰，擲到一二三，俾其他三家每人一個底',
+  },
+  {
+    id: 'dice-triple',
+    name: '圍骰',
+    fan: '收一個底 x 3',
+    description: '做莊擲骰，擲到圍骰，其他三家每人俾莊家一個底',
+  },
+  { id: 'false-hu', name: '詐胡', fan: '俾30番 x 3', description: '' },
+];
+
+export const FAN_TABLE_SOURCE_URL = 'https://twmahjong.com/';

@@ -24,10 +24,11 @@ import type {
   ResultLeaderboardEntry,
 } from '../leaderboard';
 import { FloatingAddMenu } from './FloatingAddMenu';
+import { HelperPage } from './HelperPage';
 import { IncenseMoneyForm } from './IncenseMoneyForm';
 import { HkTwMjRecordForm } from './RecordForm';
 
-type ListTab = 'results' | 'incense' | 'leaderboard';
+type ListTab = 'results' | 'incense' | 'leaderboard' | 'helper';
 
 function formatPlayedDate(date: Date, locale: Locale): string {
   return date.toLocaleDateString(locale, {
@@ -45,7 +46,11 @@ function formatPlayedTime(date: Date, locale: Locale): string {
 }
 
 function parseListTab(value: string | null): ListTab {
-  if (value === 'incense' || value === 'leaderboard') {
+  if (
+    value === 'incense' ||
+    value === 'leaderboard' ||
+    value === 'helper'
+  ) {
     return value;
   }
   return 'results';
@@ -63,6 +68,7 @@ function TabSegment({
     { id: 'results', label: hkTwMjText(locale, 'tabResults') },
     { id: 'incense', label: hkTwMjText(locale, 'tabIncense') },
     { id: 'leaderboard', label: hkTwMjText(locale, 'tabLeaderboard') },
+    { id: 'helper', label: hkTwMjText(locale, 'tabHelper') },
   ];
 
   return (
@@ -478,8 +484,12 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
       ? hkTwMjText(locale, 'tabResults')
       : tab === 'incense'
         ? hkTwMjText(locale, 'tabIncense')
-        : hkTwMjText(locale, 'tabLeaderboard');
+        : tab === 'leaderboard'
+          ? hkTwMjText(locale, 'tabLeaderboard')
+          : hkTwMjText(locale, 'tabHelper');
+  const isHelper = tab === 'helper';
   const isEmpty =
+    !isHelper &&
     !loading &&
     (tab === 'leaderboard'
       ? leaderboard.results.length === 0 && leaderboard.incense.length === 0
@@ -489,7 +499,7 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
 
   return (
     <>
-      {error ? (
+      {error && !isHelper ? (
         <p className="mb-4 text-sm text-red-600 dark:text-red-400" role="alert">
           {error}
         </p>
@@ -497,7 +507,7 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
 
       <ResultGamePage
         title={pageTitle}
-        loading={loading}
+        loading={!isHelper && loading}
         isEmpty={isEmpty}
         emptyMessage={
           tab === 'incense'
@@ -542,16 +552,19 @@ function HkTwMjRecordList({ game }: Pick<GamePageProps, 'game'>) {
             incense={leaderboard.incense}
           />
         ) : null}
+        {tab === 'helper' ? <HelperPage /> : null}
       </ResultGamePage>
 
-      <FloatingAddMenu
-        onAddResult={() => {
-          navigate(`/game/${game.id}/new`);
-        }}
-        onAddIncense={() => {
-          navigate(`/game/${game.id}/new?set=incense`);
-        }}
-      />
+      {!isHelper ? (
+        <FloatingAddMenu
+          onAddResult={() => {
+            navigate(`/game/${game.id}/new`);
+          }}
+          onAddIncense={() => {
+            navigate(`/game/${game.id}/new?set=incense`);
+          }}
+        />
+      ) : null}
     </>
   );
 }
