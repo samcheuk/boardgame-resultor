@@ -2,6 +2,7 @@ import type { GameConfig } from '../types/game';
 import { catanConfig } from './13-catan/config';
 import { gloomhavenConfig } from './174430-gloomhaven/config';
 import { wingspanConfig } from './266192-wingspan/config';
+import { cascadiaConfig } from './295947-cascadia/config';
 import { wingspanOceaniaConfig } from './300580-wingspan-oceania/config';
 import { monsterHunterWorldConfig } from './319971-monster-hunter-world/config';
 import { hkTwMjConfig } from './SC1-hk-tw-mj/config';
@@ -14,6 +15,7 @@ export const games: GameConfig[] = [
   catanConfig,
   gloomhavenConfig,
   wingspanConfig,
+  cascadiaConfig,
   wingspanOceaniaConfig,
   monsterHunterWorldConfig,
   hkTwMjConfig,
